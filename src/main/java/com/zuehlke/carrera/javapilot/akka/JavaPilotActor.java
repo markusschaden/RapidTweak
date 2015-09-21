@@ -25,6 +25,7 @@ public class JavaPilotActor extends UntypedActor {
     private ActorRef sensorEntryPoint;
     private ActorRef velocityEntryPoint;
     private ActorRef penaltyEntryPoint;
+    private ActorRef roundTimeEntryPoint;
 
     private PilotToRelayConnection relayConnection;
 
@@ -41,6 +42,8 @@ public class JavaPilotActor extends UntypedActor {
         this.sensorEntryPoint = entryPoints.get(PilotTopology.SENSOR_ENTRYPOINT);
         this.velocityEntryPoint = entryPoints.get(PilotTopology.VELOCITY_ENTRYPOINT);
         this.penaltyEntryPoint = entryPoints.get(PilotTopology.PENALTY_ENTRYPOINT);
+        this.roundTimeEntryPoint = entryPoints.get(PilotTopology.ROUNDTIME_ENTRYPOINT);
+
     }
 
 
@@ -63,8 +66,9 @@ public class JavaPilotActor extends UntypedActor {
 
             if (message instanceof RaceStartMessage) {
                 handleRaceStart((RaceStartMessage) message);
+                handlePowerAction(Configuration.START_VELOCITY);
 
-            } /*else if (message instanceof RaceStopMessage) {
+            } else if (message instanceof RaceStopMessage) {
                 handleRaceStop((RaceStopMessage) message);
 
             } else if (message instanceof SensorEvent) {
@@ -73,10 +77,10 @@ public class JavaPilotActor extends UntypedActor {
             } else if (message instanceof VelocityMessage) {
                 handleVelocityMessage((VelocityMessage) message);
 
-            } */else if (message instanceof PilotToRelayConnection) {
+            } else if (message instanceof PilotToRelayConnection) {
                 this.relayConnection = (PilotToRelayConnection) message;
 
-            } /*else if (message instanceof EndpointAnnouncement) {
+            } else if (message instanceof EndpointAnnouncement) {
                 handleEndpointAnnouncement((EndpointAnnouncement) message);
 
             } else if (message instanceof PowerAction) {
@@ -85,13 +89,13 @@ public class JavaPilotActor extends UntypedActor {
             } else if (message instanceof PenaltyMessage ) {
                 handlePenaltyMessage ((PenaltyMessage) message );
 
-            }*/ else if ( message instanceof ThresholdConfiguration) {
+            } else if ( message instanceof ThresholdConfiguration) {
                 sensorEntryPoint.forward(message, getContext());
 
-            } /*else if ( message instanceof RoundTimeMessage ) {
+            } else if ( message instanceof RoundTimeMessage ) {
                 handleRoundTime((RoundTimeMessage) message);
 
-            } */else if (message instanceof String) {
+            } else if (message instanceof String) {
 
                 // simply ignore this if there is no connection.
                 if ("ENSURE_CONNECTION".equals(message)) {
@@ -103,6 +107,8 @@ public class JavaPilotActor extends UntypedActor {
                 unhandled(message);
             }
 
+
+
         } catch ( Exception e ) {
             LOGGER.error("Caught exception: " + e.getMessage());
             e.printStackTrace();
@@ -112,6 +118,7 @@ public class JavaPilotActor extends UntypedActor {
 
     private void handleRoundTime(RoundTimeMessage message) {
         LOGGER.info ( "Round Time in ms: " + message.getRoundDuration());
+        roundTimeEntryPoint.forward(message, getContext());
     }
 
     private void handlePenaltyMessage(PenaltyMessage message) {
