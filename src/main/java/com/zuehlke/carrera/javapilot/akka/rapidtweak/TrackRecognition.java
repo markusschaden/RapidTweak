@@ -33,10 +33,12 @@ public class TrackRecognition extends UntypedActor {
     private final Logger LOGGER = LoggerFactory.getLogger(TrackRecognition.class);
 
     private TrackElement currentTrackElement = null;
-    private long start = 0;
+    private long startTrackElement = 0;
+    private long startSpeedMeasureElement = 0;
     private Track track = new Track();
 
     private HeuristicElements heuristicElements = new HeuristicElements();
+    private boolean lastSpeedMeasure = false;
 
     public TrackRecognition(ActorRef pilot) {
         this.pilot = pilot;
@@ -59,22 +61,23 @@ public class TrackRecognition extends UntypedActor {
 
                 if (currentTrackElement == null) {
                     currentTrackElement = (heuristicElements.getHeuristicElement(((SensorEvent) message).getG()[2]));
-                    start = ((SensorEvent) message).getTimeStamp();
+                    startTrackElement = ((SensorEvent) message).getTimeStamp();
                 }
 
                 TrackElement newTrackElement = (heuristicElements.getHeuristicElement(((SensorEvent) message).getG()[2]));
 
                 if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
                     long end = ((SensorEvent) message).getTimeStamp();
-                    currentTrackElement.setTime(end - start);
+                    currentTrackElement.setTime(end - startTrackElement);
                     track.trackElements.add(currentTrackElement);
                     currentTrackElement = newTrackElement;
-                    start = end;
+                    startTrackElement = end;
                 }
 
             }
         } else if (message instanceof VelocityMessage) {
             handleVelocityMessage((VelocityMessage) message);
+
         } else if (message instanceof RoundTimeMessage) {
 
             synchronized (TrackRecognition.this) {
@@ -101,9 +104,9 @@ public class TrackRecognition extends UntypedActor {
     private void finishTrack(Object message) {
 
         long end = ((RoundTimeMessage) message).getTimestamp();
-        currentTrackElement.setTime(end - start);
+        currentTrackElement.setTime(end - startTrackElement);
         track.trackElements.add(currentTrackElement);
-        start = end;
+        startTrackElement = end;
 
         if ((track.trackElements.get(0).getClass().equals(track.trackElements.get(track.trackElements.size() - 1).getClass()))) {
             //merge start and end
@@ -111,12 +114,28 @@ public class TrackRecognition extends UntypedActor {
 
         }
         LOGGER.info(track.trackElements.toString());
+        lastSpeedMeasure = true;
 
         track.trackElements.clear();
     }
 
     private void handleVelocityMessage(VelocityMessage message) {
-        // ignore for now
+
+        if(startSpeedMeasureElement == 0) {
+            startSpeedMeasureElement = message.getTimeStamp();
+        } else {
+            long end = message.getTimeStamp();
+            track.speedTrackers.add(new SpeedMeasureTrackElement(end-startSpeedMeasureElement, message.getVelocity()));
+            startSpeedMeasureElement = end;
+
+            if(lastSpeedMeasure) {
+                lastSpeedMeasure = false;
+                LOGGER.info(track.speedTrackers.toString());
+                track.speedTrackers.clear();
+            }
+
+        }
+
     }
 
     private void handleSensorEvent(SensorEvent event) {

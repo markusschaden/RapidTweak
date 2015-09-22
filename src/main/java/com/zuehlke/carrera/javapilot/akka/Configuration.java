@@ -6,7 +6,7 @@ package com.zuehlke.carrera.javapilot.akka;
 public class Configuration {
 
     public static final int START_VELOCITY = 100;
-    public static final int WARMUP_NUMBER = 3;
+    public static final int WARMUP_NUMBER = 5;
     public static final int WARMUP_VELOCITY_INCREASE = 10;
 
 }

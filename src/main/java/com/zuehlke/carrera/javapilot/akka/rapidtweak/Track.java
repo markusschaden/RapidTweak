@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,5 +9,6 @@ import java.util.List;
 public class Track {
 
     public List<TrackElement> trackElements = new CircularArrayList<>();
+    public List<SpeedMeasureTrackElement> speedTrackers = new ArrayList<>();
 
 }
