@@ -32,6 +32,8 @@ public class RoutingService {
         trackModeler.setPower(100);
         trackOptimizer = new TrackOptimizer(race);
         PowerService.getInstance().init(pilot, actor);
+        PowerService.getInstance().addPowerNotifier(trackModeler);
+        PowerService.getInstance().addPowerNotifier(trackOptimizer);
     }
 
     public void onPenalyMessage(PenaltyMessage message) {

@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 @Data
 @ToString
-public class TrackModeler {
+public class TrackModeler implements PowerNotifier {
 
     private final Logger LOGGER = LoggerFactory.getLogger(TrackModeler.class);
 
@@ -114,4 +115,8 @@ public class TrackModeler {
     }
 
 
+    @Override
+    public void onNewPower(int power) {
+        this.power = power;
+    }
 }

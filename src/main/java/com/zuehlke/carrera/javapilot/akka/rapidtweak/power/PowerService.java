@@ -3,8 +3,12 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.power;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.TrackModeler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Markus on 25.09.2015.
@@ -16,6 +20,7 @@ public class PowerService {
     private static PowerService instance;
     private ActorRef pilot;
     private UntypedActor actor;
+    private List<PowerNotifier> powerNotifierList = new ArrayList<>();
 
     private PowerService() {
 
@@ -27,6 +32,9 @@ public class PowerService {
 
     public void setPower(int power) {
         LOGGER.info("Set Power to: " + power);
+        for(PowerNotifier powerNotifier : powerNotifierList) {
+            powerNotifier.onNewPower(power);
+        }
         pilot.tell(new PowerAction(power), actor.getSelf());
     }
 
@@ -42,4 +50,7 @@ public class PowerService {
     }
 
 
+    public void addPowerNotifier(PowerNotifier powerNotifier) {
+        this.powerNotifierList.add(powerNotifier);
+    }
 }

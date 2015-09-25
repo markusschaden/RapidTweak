@@ -1,10 +1,13 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Markus on 22.09.2015.
@@ -13,6 +16,7 @@ public class StraightOptimizer implements Optimizer {
 
     private Race race;
     private boolean active = false;
+    private final Logger LOGGER = LoggerFactory.getLogger(StraightOptimizer.class);
 
     public StraightOptimizer(Race race) {
         this.race = race;
@@ -32,12 +36,16 @@ public class StraightOptimizer implements Optimizer {
 
             double duration = trackElement.getAverageDuration(power);
 
-            double diff = power / newPower;
-            double newDuration = diff * duration;   
+            double diff = (double)power / (double)newPower;
+            LOGGER.debug("Diff: " + diff);
+            double newDuration = diff * duration;
 
-            PowerService.getInstance().setPower(130);
+            PowerExecutor.setPowerFor(newPower, (int)newDuration, power);
+            LOGGER.info("Power Settings, newPower: " + newPower + ", duration: " + duration + ", newDuration: " + newDuration);
+
+            //PowerService.getInstance().setPower(140);
         } else {
-            PowerService.getInstance().setPower(100);
+            //PowerService.getInstance().setPower(100);
         }
     }
 

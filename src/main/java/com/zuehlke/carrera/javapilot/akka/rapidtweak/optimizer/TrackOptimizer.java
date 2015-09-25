@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.HeuristicElements;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @Data
 @ToString
-public class TrackOptimizer {
+public class TrackOptimizer implements PowerNotifier {
 
     private final Logger LOGGER = LoggerFactory.getLogger(TrackOptimizer.class);
 
@@ -35,7 +36,7 @@ public class TrackOptimizer {
     private long timeRoundBegin;
 
     public TrackOptimizer(Race race) {
-this.race = race;
+        this.race = race;
         StraightOptimizer straightOptimizer = new StraightOptimizer(race);
         straightOptimizer.setActive(true);
         heuristicElements = new HeuristicElements();
@@ -62,7 +63,7 @@ this.race = race;
 
     public void onSensorEvent(SensorEvent sensorEvent) {
 
-        if(currentTrackElement != null) {
+        if (currentTrackElement != null) {
 
             TrackElement newTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
 
@@ -77,7 +78,7 @@ this.race = race;
                     segementCounter++;
                     nextTrackElement = race.getTrack().get(segementCounter);
 
-                } while(nextTrackElement.getClass().equals(newTrackElement));
+                } while (nextTrackElement.getClass().equals(newTrackElement));
 
                 LOGGER.info("Recognsied TrackElement: " + nextTrackElement.toString());
                 fireOptimizerEvents(nextTrackElement, segementCounter);
@@ -94,7 +95,7 @@ this.race = race;
 
     private void fireOptimizerEvents(TrackElement trackElement, int elementPosition) {
 
-        for(Optimizer optimizer : optimizers) {
+        for (Optimizer optimizer : optimizers) {
             optimizer.onTrackElementChange(trackElement, elementPosition);
         }
 
@@ -103,7 +104,7 @@ this.race = race;
 
 
     public void onPenalyMessage(PenaltyMessage message) {
-        for(Optimizer optimizer : optimizers) {
+        for (Optimizer optimizer : optimizers) {
             optimizer.onPenalityEvent(message);
         }
     }
@@ -111,6 +112,10 @@ this.race = race;
     public void onVelocityMessage(VelocityMessage message) {
 
 
+    }
 
+    @Override
+    public void onNewPower(int power) {
+        this.power = power;
     }
 }
