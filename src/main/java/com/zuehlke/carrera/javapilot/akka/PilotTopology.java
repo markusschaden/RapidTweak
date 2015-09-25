@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.zuehlke.carrera.javapilot.akka.experimental.ConstantPower;
 import com.zuehlke.carrera.javapilot.akka.experimental.PowerUpUntilPenalty;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.Speeeeeeeeedyyyyyyy;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.TrackRecognition;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class PilotTopology {
 
     public Map<String, ActorRef> create() {
 
-        ActorRef initialProcessor = system.actorOf(TrackRecognition.props(kobayashi));
+        ActorRef initialProcessor = system.actorOf(Speeeeeeeeedyyyyyyy.props(kobayashi));
 
         entryPoints.put(PENALTY_ENTRYPOINT, initialProcessor);
         entryPoints.put(SENSOR_ENTRYPOINT, initialProcessor);

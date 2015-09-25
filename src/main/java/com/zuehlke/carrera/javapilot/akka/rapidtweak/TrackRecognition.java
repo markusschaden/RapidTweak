@@ -6,7 +6,6 @@ import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
 import com.zuehlke.carrera.javapilot.akka.experimental.ThresholdConfiguration;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackKeeper;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import com.zuehlke.carrera.relayapi.messages.SensorEvent;
 import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
@@ -46,8 +45,6 @@ public class TrackRecognition extends UntypedActor {
     private HeuristicElements heuristicElements = new HeuristicElements();
     private boolean lastSpeedMeasure = false;
     private int numberOfRoundSameVelocity = 0;
-
-    private TrackKeeper trackKeeper = new TrackKeeper();
 
     public TrackRecognition(ActorRef pilot) {
         this.pilot = pilot;
@@ -183,7 +180,6 @@ public class TrackRecognition extends UntypedActor {
                 oldTrack.speedTrackers = track.speedTrackers;
                 track.speedTrackers = new ArrayList<>();
 
-                trackKeeper.addTrack(oldTrack);
             }
 
         }
