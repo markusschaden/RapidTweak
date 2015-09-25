@@ -12,16 +12,6 @@ public class CircularArrayList<E> extends ArrayList<E>
 
     public E get(int index)
     {
-        if (index == -1)
-        {
-            index = size()-1;
-        }
-
-        else if (index == size())
-        {
-            index = 0;
-        }
-
-        return super.get(index);
+        return super.get(index % size());
     }
 }

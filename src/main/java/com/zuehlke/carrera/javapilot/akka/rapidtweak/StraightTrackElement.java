@@ -8,7 +8,7 @@ public class StraightTrackElement extends TrackElement {
     @Override
     public String toString() {
         return "StraightTrackElement{" +
-                "time=" + time +
+                "time=" + getTime() +
                 '}';
     }
 }

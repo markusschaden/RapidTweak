@@ -8,7 +8,25 @@ import java.util.List;
  */
 public class Track {
 
+    public int speed;
     public List<TrackElement> trackElements = new CircularArrayList<>();
     public List<SpeedMeasureTrackElement> speedTrackers = new ArrayList<>();
 
+    public Track() {
+
+    }
+
+    public Track(int startVelocity) {
+        this.speed = startVelocity;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "speed=" + speed +
+                ", trackElements=" + trackElements +
+                ", speedTrackers=" + speedTrackers +
+                '}';
+    }
 }

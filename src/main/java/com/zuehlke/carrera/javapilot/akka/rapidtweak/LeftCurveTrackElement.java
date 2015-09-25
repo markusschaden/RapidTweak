@@ -8,7 +8,7 @@ public class LeftCurveTrackElement extends TrackElement {
     @Override
     public String toString() {
         return "LeftCurveTrackElement{" +
-                "time=" + time +
+                "time=" + getTime() +
                 '}';
     }
 }
