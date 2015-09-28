@@ -10,26 +10,46 @@ public class PowerExecutor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PowerExecutor.class);
 
-    public static void setPowerFor(int power, int duration, int oldPower) {
+    public void setPowerFor(int power, int duration, int oldPower) {
 
-        Thread thread = new Thread() {
+        PowerThread powerThread = new TemporarySpeedThread(power, duration, oldPower);
 
-            @Override
-            public void run() {
+        PowerService.getInstance().setPowerThread(powerThread);
+    }
 
-                PowerService.getInstance().setPower(power);
-                try {
-                    LOGGER.info("Waiting for " + duration + "ms");
-                    Thread.sleep(duration);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+
+    class TemporarySpeedThread extends PowerThread {
+        private boolean canceled = false;
+
+        private int power;
+        private int duration;
+        private int oldPower;
+
+        public TemporarySpeedThread(int power, int duration, int oldPower) {
+            this.power = power;
+            this.duration = duration;
+            this.oldPower = oldPower;
+        }
+
+        @Override
+        public void run() {
+
+            PowerService.getInstance().setPower(power);
+            try {
+                LOGGER.info("Waiting for " + duration + "ms");
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(!canceled) {
                 PowerService.getInstance().setPower(oldPower);
             }
-        };
+        }
 
-        thread.start();
-
+        public void cancel() {
+            canceled = true;
+        }
     }
 
 

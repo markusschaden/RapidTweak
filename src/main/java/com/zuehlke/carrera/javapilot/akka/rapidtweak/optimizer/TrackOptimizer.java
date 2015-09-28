@@ -116,6 +116,7 @@ public class TrackOptimizer implements PowerNotifier {
 
     @Override
     public void onNewPower(int power) {
+        //TODO: BUG: power is set back to 100 after acceleration. => Wrong position and distance data for key 100
         this.power = power;
     }
 }

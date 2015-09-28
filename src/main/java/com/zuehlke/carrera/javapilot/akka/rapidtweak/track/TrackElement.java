@@ -17,6 +17,7 @@ public abstract class TrackElement extends Element {
 
     protected Multimap<Integer, Long> durations = ArrayListMultimap.create();
     protected List<SpeedMeasureTrackElement> speedMeasureTrackElements = new ArrayList<>();
+    protected List<Integer> speeds = new ArrayList<>();
 
     public Double getAverageDuration(int power) {
 

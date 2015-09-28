@@ -21,18 +21,29 @@ public class PowerService {
     private ActorRef pilot;
     private UntypedActor actor;
     private List<PowerNotifier> powerNotifierList = new ArrayList<>();
+    private PowerThread powerThread;
 
     private PowerService() {
 
     }
 
     public void init(ActorRef pilot, UntypedActor actor) {
-        this.pilot = pilot; this.actor = actor;
+        this.pilot = pilot;
+        this.actor = actor;
+    }
+
+    public void setPowerThread(PowerThread powerThread) {
+        if (this.powerThread != null) {
+            this.powerThread.cancel();
+        }
+        this.powerThread = powerThread;
+
+        powerThread.start();
     }
 
     public void setPower(int power) {
         LOGGER.info("Set Power to: " + power);
-        for(PowerNotifier powerNotifier : powerNotifierList) {
+        for (PowerNotifier powerNotifier : powerNotifierList) {
             powerNotifier.onNewPower(power);
         }
         pilot.tell(new PowerAction(power), actor.getSelf());

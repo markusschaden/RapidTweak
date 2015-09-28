@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
@@ -32,7 +33,14 @@ public class StraightOptimizer implements Optimizer {
         if(trackElement instanceof StraightTrackElement) {
 
             int power = 100;
-            int newPower = 130;
+            int newPower = 100;
+            if(trackElement.getSpeeds().size()==0) {
+                newPower = Configuration.START_VELOCITY + Configuration.WARMUP_VELOCITY_INCREASE;
+            } else {
+                newPower = trackElement.getSpeeds().get(trackElement.getSpeeds().size()-1) + Configuration.WARMUP_VELOCITY_INCREASE;
+            }
+
+            trackElement.getSpeeds().add(newPower);
 
             double duration = trackElement.getAverageDuration(power);
 
@@ -40,7 +48,8 @@ public class StraightOptimizer implements Optimizer {
             LOGGER.debug("Diff: " + diff);
             double newDuration = diff * duration;
 
-            PowerExecutor.setPowerFor(newPower, (int)newDuration, power);
+            PowerExecutor powerExecutor = new PowerExecutor();
+            powerExecutor.setPowerFor(newPower, (int) newDuration, power);
             LOGGER.info("Power Settings, newPower: " + newPower + ", duration: " + duration + ", newDuration: " + newDuration);
 
             //PowerService.getInstance().setPower(140);
