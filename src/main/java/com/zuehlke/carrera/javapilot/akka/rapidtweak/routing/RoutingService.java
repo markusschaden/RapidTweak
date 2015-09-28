@@ -2,6 +2,7 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.routing;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.AndroidAppWebSocketServer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
@@ -35,6 +36,16 @@ public class RoutingService {
         PowerService.getInstance().addPowerNotifier(trackModeler);
         PowerService.getInstance().addPowerNotifier(trackOptimizer);
     }
+
+    private void createWebSocketServer() {
+        int port = 10500;
+        AndroidAppWebSocketServer androidAppWebSocketServer = new AndroidAppWebSocketServer(port);
+        androidAppWebSocketServer.start();
+        LOGGER.info("WebSocketServer initialized on port " + port);
+
+    }
+
+
 
     public void onPenalyMessage(PenaltyMessage message) {
 

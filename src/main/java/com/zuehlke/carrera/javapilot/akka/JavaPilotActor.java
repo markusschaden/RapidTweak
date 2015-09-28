@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 import com.zuehlke.carrera.javapilot.akka.experimental.ThresholdConfiguration;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.AndroidAppWebSocketServer;
 import com.zuehlke.carrera.javapilot.config.PilotProperties;
 import com.zuehlke.carrera.javapilot.services.EndpointAnnouncement;
 import com.zuehlke.carrera.javapilot.services.PilotToRelayConnection;
@@ -34,7 +35,10 @@ public class JavaPilotActor extends UntypedActor {
         this.properties = properties;
 
         createTopology ();
+
+
     }
+
 
     private void createTopology() {
         Map<String, ActorRef> entryPoints = new PilotTopology(getSelf(), getContext().system()).create();
