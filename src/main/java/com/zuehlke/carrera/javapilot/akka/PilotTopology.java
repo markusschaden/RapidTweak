@@ -2,10 +2,7 @@ package com.zuehlke.carrera.javapilot.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.zuehlke.carrera.javapilot.akka.experimental.ConstantPower;
-import com.zuehlke.carrera.javapilot.akka.experimental.PowerUpUntilPenalty;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.Speeeeeeeeedyyyyyyy;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.TrackRecognition;
 
 import java.util.HashMap;
 import java.util.Map;
