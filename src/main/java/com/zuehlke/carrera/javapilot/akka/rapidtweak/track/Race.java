@@ -1,6 +1,5 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.track;
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.CircularArrayList;
 import lombok.Data;
 import lombok.ToString;
 
