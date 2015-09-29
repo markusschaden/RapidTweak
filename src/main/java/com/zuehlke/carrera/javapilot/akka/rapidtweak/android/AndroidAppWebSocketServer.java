@@ -1,5 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.android;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpeedMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.Message;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.slf4j.Logger;
@@ -10,21 +12,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by Markus on 28.09.2015.
- */
 public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AndroidAppWebSocketServer.class);
-    private List<ServerEventsListener> serverEventsList = new ArrayList<>();
+
+    private List<Message> messages = new ArrayList<>();
+    private MessageDispatcher messageDispatcher = new MessageDispatcher();
 
     public AndroidAppWebSocketServer(int port) {
         super(new InetSocketAddress(port));
 
-    }
-
-    public void addServerEventListener(ServerEventsListener serverEvents) {
-        serverEventsList.add(serverEvents);
+        messages.add(new ManualSpeedMessage());
     }
 
     @Override
@@ -42,19 +40,7 @@ public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSock
     public void onMessage(WebSocket conn, String message) {
         LOGGER.info("WebSocket recveived:" + message);
 
-        if (message.startsWith("speed=")) {
-            String speedString = message.replace("speed=", "");
-            try {
-                int speed = Integer.parseInt(speedString);
-                for(ServerEventsListener listener : serverEventsList) {
-                    listener.onSpeedChange(speed);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-
+        messageDispatcher.onMessage(message);
     }
 
     @Override

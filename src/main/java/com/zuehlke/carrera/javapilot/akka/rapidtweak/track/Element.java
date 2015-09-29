@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Collection;
  */
 @Data
 @ToString(callSuper = true)
-public abstract class Element {
+public abstract class Element implements Serializable {
 
     protected Multimap<Integer, Long> positions = ArrayListMultimap.create();
 
