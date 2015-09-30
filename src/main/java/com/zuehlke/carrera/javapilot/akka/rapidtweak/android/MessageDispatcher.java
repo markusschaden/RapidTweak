@@ -26,7 +26,7 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
 
     public void onMessage(String message) {
 
-        String parts[] = message.split("|");
+        String parts[] = message.split("\\|");
         if (parts.length == 2) {
             String className = parts[0];
             String data = parts[1];
