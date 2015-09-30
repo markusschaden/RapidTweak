@@ -10,4 +10,11 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class RightCurveTrackElement extends TrackElement {
 
+    private final static String ELEMENT_NAME = "Right curve ";
+    private static int elementCounter = 1;
+
+    @Override
+    public String getTrackName() {
+        return ELEMENT_NAME + elementCounter++;
+    }
 }

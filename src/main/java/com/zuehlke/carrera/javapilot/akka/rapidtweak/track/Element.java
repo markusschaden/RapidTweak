@@ -13,6 +13,9 @@ import java.util.Collection;
 public abstract class Element implements Serializable {
 
     protected Multimap<Integer, Long> positions = ArrayListMultimap.create();
+    private String elementName;
+
+    public abstract String getTrackName();
 
     public Double getAveragePosition(int power) {
 

@@ -24,6 +24,4 @@ public abstract class TrackElement extends Element {
         return getAverageOfList(durations.get(power));
     }
 
-
-
 }

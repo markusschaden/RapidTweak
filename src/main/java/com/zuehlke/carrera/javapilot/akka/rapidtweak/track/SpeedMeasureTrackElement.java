@@ -13,7 +13,13 @@ import lombok.ToString;
 public class SpeedMeasureTrackElement extends Element {
 
     protected Multimap<Integer, Double> speeds = ArrayListMultimap.create();
+    private final static String ELEMENT_NAME = "SpeedMeasure ";
+    private static int elementCounter = 1;
 
+    @Override
+    public String getTrackName() {
+        return ELEMENT_NAME + elementCounter++;
+    }
 
     public Double getAveragePosition(int power) {
 

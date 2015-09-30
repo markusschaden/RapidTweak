@@ -21,5 +21,14 @@ public class SerializatorTest {
         System.out.println(m.getClass());
     }
 
+    @Test
+    public void testSplit() {
+        String parts[] = "test|test".split("\\|");
+        if (parts.length == 2) {
+            String className = parts[0];
+            String data = parts[1];
+        }
+        System.out.println("" + parts.length);
+    }
 
 }
