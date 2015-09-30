@@ -8,9 +8,6 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.Collection;
 
-/**
- * Created by Markus on 25.09.2015.
- */
 @Data
 @ToString(callSuper = true)
 public abstract class Element implements Serializable {

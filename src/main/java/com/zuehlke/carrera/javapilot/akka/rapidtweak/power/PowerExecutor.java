@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.power;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ public class PowerExecutor {
 
         PowerThread powerThread = new TemporarySpeedThread(power, duration, oldPower);
 
-        PowerService.getInstance().setPowerThread(powerThread);
+        ServiceManager.getInstance().getPowerService().setPowerThread(powerThread);
     }
 
 
@@ -35,7 +36,7 @@ public class PowerExecutor {
         @Override
         public void run() {
 
-            PowerService.getInstance().setPower(power);
+            ServiceManager.getInstance().getPowerService().setPower(power);
             try {
                 LOGGER.info("Waiting for " + duration + "ms");
                 Thread.sleep(duration);
@@ -43,7 +44,7 @@ public class PowerExecutor {
                 e.printStackTrace();
             }
             if(!canceled) {
-                PowerService.getInstance().setPower(oldPower);
+                ServiceManager.getInstance().getPowerService().setPower(oldPower);
             }
         }
 

@@ -2,10 +2,13 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.routing;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.AndroidAppWebSocketServer;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.MessageEndpoint;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ConfigurationMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpeedMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.TrackModeler;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
@@ -15,10 +18,7 @@ import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by Markus on 25.09.2015.
- */
-public class RoutingService {
+public class RoutingService implements MessageEndpoint {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RoutingService.class);
 
@@ -32,22 +32,15 @@ public class RoutingService {
         trackModeler = new TrackModeler(race);
         trackModeler.setPower(100);
         trackOptimizer = new TrackOptimizer(race);
-        PowerService.getInstance().init(pilot, actor);
-        PowerService.getInstance().addPowerNotifier(trackModeler);
-        PowerService.getInstance().addPowerNotifier(trackOptimizer);
+
+        ServiceManager.getInstance().getPowerService().init(pilot, actor);
+        ServiceManager.getInstance().getPowerService().addPowerNotifier(trackModeler);
+        ServiceManager.getInstance().getPowerService().addPowerNotifier(trackOptimizer);
+
+        ServiceManager.getInstance().getMessageDispatcher().addMessageEndpoint(this);
     }
 
-    private void createWebSocketServer() {
-        int port = 10500;
-        AndroidAppWebSocketServer androidAppWebSocketServer = new AndroidAppWebSocketServer(port);
-        androidAppWebSocketServer.start();
-        LOGGER.info("WebSocketServer initialized on port " + port);
-
-    }
-
-
-
-    public void onPenalyMessage(PenaltyMessage message) {
+    public void onPenaltyMessage(PenaltyMessage message) {
 
         switch(raceStatus) {
             case RACE:
@@ -74,12 +67,8 @@ public class RoutingService {
         }
     }
 
-
-
     public void onSensorEvent(SensorEvent event) {
-
-
-        switch(raceStatus) {
+        switch (raceStatus) {
 
             case LEARN:
                 trackModeler.onSensorEvent(event);
@@ -92,8 +81,6 @@ public class RoutingService {
                 break;
         }
     }
-
-
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
 
@@ -108,8 +95,6 @@ public class RoutingService {
                 break;
 
             case LEARN:
-
-
                 trackModeler.onRoundTimeMessage(message);
                 raceStatus = RaceStatus.RACE;
                 LOGGER.info("onRoundTimeMessage | RaceStatus: " + raceStatus);
@@ -120,15 +105,28 @@ public class RoutingService {
             case RACE:
                 trackOptimizer.onRoundTimeMessage(message);
 
-
                 break;
         }
-
-
-
-
     }
 
 
+    @Override
+    public void onConfigurationMessage(ConfigurationMessage message) {
+        LOGGER.info("Not implemented");
+    }
 
+    @Override
+    public void onManualSpeedMessage(ManualSpeedMessage message) {
+        LOGGER.info("Not implemented");
+    }
+
+    @Override
+    public void onMonitoringMessage(MonitoringMessage message) {
+        LOGGER.warn("This Message type is not supported");
+    }
+
+    @Override
+    public void onRoundTimeMessage(com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage message) {
+        LOGGER.warn("This Message type is not supported");
+    }
 }

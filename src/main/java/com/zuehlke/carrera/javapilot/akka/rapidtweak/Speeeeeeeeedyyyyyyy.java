@@ -4,9 +4,6 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.AndroidAppWebSocketServer;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.ServerEventsListener;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.routing.RoutingService;
 import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
@@ -31,25 +28,16 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
         this.power = START_VELOCITY;
         routingService = new RoutingService(pilot, this);
 
-        createWebSocketServer();
+
     }
 
     /***
-     * Creates a websocket server for the android app, define the speed,
-     * TODO: allows to control the global settings and is for monitoring usage
+     * Creates a websocket server for the android app, define the speed, allows to control the global settings and is for monitoring usage
      * TODO: Should be started at program startup and only once (moving to JavaPilotActor)
      */
     private void createWebSocketServer() {
-        int port = 10500;
-        AndroidAppWebSocketServer androidAppWebSocketServer = new AndroidAppWebSocketServer(port);
-        androidAppWebSocketServer.start();
-        LOGGER.info("WebSocketServer initialized on port " + port);
-        androidAppWebSocketServer.addServerEventListener(new ServerEventsListener() {
-            @Override
-            public void onSpeedChange(int speed) {
-                PowerService.getInstance().setPower(speed);
-            }
-        });
+
+
     }
 
 
@@ -68,7 +56,7 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
         } else if (message instanceof VelocityMessage) {
             routingService.onVelocityMessage((VelocityMessage)message);
         } else if (message instanceof PenaltyMessage) {
-            routingService.onPenalyMessage((PenaltyMessage) message);
+            routingService.onPenaltyMessage((PenaltyMessage) message);
         } else if (message instanceof RoundTimeMessage) {
             routingService.onRoundTimeMessage((RoundTimeMessage)message);
         } else if (message instanceof RaceStartMessage){

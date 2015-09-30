@@ -1,28 +1,22 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.android;
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpeedMessage;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.Message;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AndroidAppWebSocketServer.class);
 
-    private List<Message> messages = new ArrayList<>();
-    private MessageDispatcher messageDispatcher = new MessageDispatcher();
+    private MessageHandler messageHandler;
 
-    public AndroidAppWebSocketServer(int port) {
+    public AndroidAppWebSocketServer(int port, MessageHandler messageHandler) {
         super(new InetSocketAddress(port));
-
-        messages.add(new ManualSpeedMessage());
+        this.messageHandler = messageHandler;
     }
 
     @Override
@@ -40,7 +34,7 @@ public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSock
     public void onMessage(WebSocket conn, String message) {
         LOGGER.info("WebSocket recveived:" + message);
 
-        messageDispatcher.onMessage(message);
+        messageHandler.onMessage(message);
     }
 
     @Override
@@ -48,12 +42,17 @@ public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSock
         LOGGER.info("Error:", ex);
     }
 
-    public void sendToAll(String text) {
+
+    void sendToAll(String text) {
         Collection<WebSocket> con = connections();
         synchronized (con) {
             for (WebSocket c : con) {
                 c.send(text);
             }
         }
+    }
+
+    interface MessageHandler {
+        void onMessage(String message);
     }
 }

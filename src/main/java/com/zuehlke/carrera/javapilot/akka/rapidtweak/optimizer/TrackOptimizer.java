@@ -1,8 +1,9 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.HeuristicElements;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
@@ -12,7 +13,6 @@ import lombok.Data;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.management.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +58,11 @@ public class TrackOptimizer implements PowerNotifier {
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
         timeRoundBegin = message.getTimestamp();
+
+        com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage roundTimeMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage();
+        roundTimeMessage.setRoundTime(100000);
+        roundTimeMessage.setRace(race);
+        ServiceManager.getInstance().getMessageDispatcher().sendMessage(roundTimeMessage);
     }
 
 

@@ -9,4 +9,8 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 public class RightCurveTrackElement extends TrackElement {
+
+    public RightCurveTrackElement() {
+        clazz = getClass().getCanonicalName();
+    }
 }

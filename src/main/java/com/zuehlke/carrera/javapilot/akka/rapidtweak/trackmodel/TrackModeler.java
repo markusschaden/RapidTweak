@@ -1,6 +1,8 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
@@ -53,6 +55,10 @@ public class TrackModeler implements PowerNotifier {
             race.getTrack().add(currentTrackElement);
 
             LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
+
+            MonitoringMessage monitoringMessage = new MonitoringMessage();
+            monitoringMessage.setTrackElement(currentTrackElement);
+            ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
             currentTrackElement = newTrackElement;
 
