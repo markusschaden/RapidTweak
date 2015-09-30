@@ -1,15 +1,9 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.android;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +32,14 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
             String data = parts[1];
 
             try {
-                Message rawMessage = new Gson().fromJson(data, (Type) Class.forName(className));
+                Class clazz = Class.forName(className);
+                Serializator<Message> serializator = new Serializator<>();
+                Message rawMessage = serializator.deserialize(data, clazz);
                 dispatchMessge(rawMessage);
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
 
         } else {
@@ -75,15 +72,9 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
                 androidAppWebSocketServer.sendToAll(className + "|" + json);
             });
             sendMessageThread.start();*/
-            Gson gson = new GsonBuilder()
-                    .enableComplexMapKeySerialization()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(ArrayListMultimap.class, new MultimapAdapter())
-                    .registerTypeAdapter(HashMultimap.class, new MultimapAdapter())
-                    .registerTypeAdapter(Multimap.class, new MultimapAdapter())
-                    .create();
 
-            String json = gson.toJson(message);
+            Serializator<Message> serializator = new Serializator<>();
+            String json = serializator.serialize(message);
             String className = message.getClass().getCanonicalName();
             androidAppWebSocketServer.sendToAll(className + "|" + json);
         } else {

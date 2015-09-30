@@ -10,7 +10,4 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class StraightTrackElement extends TrackElement {
 
-    public StraightTrackElement() {
-        clazz = getClass().getCanonicalName();
-    }
 }
