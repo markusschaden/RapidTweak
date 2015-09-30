@@ -1,6 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages;
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Element;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,5 +8,12 @@ import lombok.ToString;
 @ToString
 public class MonitoringMessage extends Message {
 
-    TrackElement trackElement;
+    private Element element;
+
+    public MonitoringMessage() {
+    }
+
+    public MonitoringMessage(Element element) {
+        this.element = element;
+    }
 }

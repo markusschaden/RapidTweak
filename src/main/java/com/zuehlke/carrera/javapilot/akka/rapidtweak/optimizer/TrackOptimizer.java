@@ -1,8 +1,10 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.HeuristicElements;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
@@ -34,6 +36,7 @@ public class TrackOptimizer implements PowerNotifier {
     private long startTrackElement;
     private int segementCounter = 0;
     private long timeRoundBegin;
+    private int velocityCounter = 0;
 
     public TrackOptimizer(Race race) {
         this.race = race;
@@ -53,6 +56,7 @@ public class TrackOptimizer implements PowerNotifier {
         currentTrackElement = race.getTrack().get(segementCounter);
         startTrackElement = message.getTimestamp();
         timeRoundBegin = message.getTimestamp();
+        velocityCounter = 0;
     }
 
 
@@ -88,6 +92,8 @@ public class TrackOptimizer implements PowerNotifier {
                 LOGGER.info("Recognsied TrackElement: " + nextTrackElement.toString());
                 fireOptimizerEvents(nextTrackElement, segementCounter);
 
+                MonitoringMessage monitoringMessage = new MonitoringMessage(nextTrackElement);
+                ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
                 nextTrackElement.getPositions().put(power, end - timeRoundBegin);
 
@@ -115,6 +121,19 @@ public class TrackOptimizer implements PowerNotifier {
     }
 
     public void onVelocityMessage(VelocityMessage message) {
+
+        long end = message.getTimeStamp();
+        SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(velocityCounter);
+
+        element.getSpeeds().put(power, message.getVelocity());
+        element.getPositions().put(power, end - timeRoundBegin);
+
+        velocityCounter++;
+
+        LOGGER.info("Updated SpeedMeasureTrackElement: " + element.toString());
+
+        MonitoringMessage monitoringMessage = new MonitoringMessage(element);
+        ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
 
     }

@@ -31,6 +31,7 @@ public class PilotTopology {
         this.system = system;
 
         LOGGER.info("Starting WebSocketServer");
+        //Creates a websocket server for the android app, define the speed, allows to control the global settings and is for monitoring usage
         ServiceManager.getInstance().getMessageDispatcher().startServer(10500);
 
     }

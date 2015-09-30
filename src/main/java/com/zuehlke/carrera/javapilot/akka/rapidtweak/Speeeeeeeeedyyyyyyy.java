@@ -31,17 +31,6 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
 
     }
 
-    /***
-     * Creates a websocket server for the android app, define the speed, allows to control the global settings and is for monitoring usage
-     * TODO: Should be started at program startup and only once (moving to JavaPilotActor)
-     */
-    private void createWebSocketServer() {
-
-
-    }
-
-
-
     public static Props props(ActorRef pilot) {
         return Props.create(Speeeeeeeeedyyyyyyy.class, () -> new Speeeeeeeeedyyyyyyy(pilot));
     }

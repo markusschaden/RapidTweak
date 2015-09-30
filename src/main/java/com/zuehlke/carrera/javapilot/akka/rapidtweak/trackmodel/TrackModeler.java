@@ -56,8 +56,7 @@ public class TrackModeler implements PowerNotifier {
 
             LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
 
-            MonitoringMessage monitoringMessage = new MonitoringMessage();
-            monitoringMessage.setTrackElement(currentTrackElement);
+            MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
             ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
             currentTrackElement = newTrackElement;
@@ -113,6 +112,8 @@ public class TrackModeler implements PowerNotifier {
 
                 LOGGER.info("Added SpeedMeasureTrackElement: " + speedMeasureTrackElement.toString());
 
+                MonitoringMessage monitoringMessage = new MonitoringMessage(speedMeasureTrackElement);
+                ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
                 break;
         }
