@@ -1,9 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
-import clover.org.jfree.util.Log;
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
@@ -11,7 +9,6 @@ import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
