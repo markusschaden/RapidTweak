@@ -16,6 +16,7 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,12 @@ public class TrackOptimizer implements PowerNotifier {
     public TrackOptimizer(Race race) {
         this.race = race;
         StraightOptimizer straightOptimizer = new StraightOptimizer(race);
+        HalfCurveOptimizer halfCurveOptimizer = new HalfCurveOptimizer(race);
         straightOptimizer.setActive(true);
         heuristicElements = new HeuristicElements();
 
         optimizers.add(straightOptimizer);
+        optimizers.add(halfCurveOptimizer);
     }
 
 
@@ -118,12 +121,27 @@ public class TrackOptimizer implements PowerNotifier {
         for (Optimizer optimizer : optimizers) {
             optimizer.onPenalityEvent(message);
         }
+
+        SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(message.getBarrier());
+        element.setSpeedLimit(message.getSpeedLimit());
     }
 
     public void onVelocityMessage(VelocityMessage message) {
 
+        String sourceId = "";
+        try {
+            Field field = message.getClass().getDeclaredField("sourceId");
+            field.setAccessible(true);
+            sourceId = (String) field.get(message);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         long end = message.getTimeStamp();
-        SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(velocityCounter);
+        SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(sourceId);
+        //SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(velocityCounter);
 
         element.getSpeeds().put(power, message.getVelocity());
         element.getPositions().put(power, end - timeRoundBegin);

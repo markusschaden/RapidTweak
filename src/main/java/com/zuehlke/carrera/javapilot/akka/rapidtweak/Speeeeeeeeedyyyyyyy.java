@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.routing.RoutingService;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
 import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,6 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
         } else if (message instanceof RoundTimeMessage) {
             routingService.onRoundTimeMessage((RoundTimeMessage)message);
         } else if (message instanceof RaceStartMessage){
-
             pilot.tell(new PowerAction(100), getSelf());
         } else {
 

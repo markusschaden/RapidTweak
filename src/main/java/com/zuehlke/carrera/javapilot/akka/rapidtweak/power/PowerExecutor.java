@@ -18,6 +18,13 @@ public class PowerExecutor {
         ServiceManager.getInstance().getPowerService().setPowerThread(powerThread);
     }
 
+    public void setPowerAfterTime(int power, long duration) {
+
+        PowerThread powerThread = new PowerAfterTime(power, duration);
+
+        ServiceManager.getInstance().getPowerService().setPowerThread(powerThread);
+    }
+
 
 
     class TemporarySpeedThread extends PowerThread {
@@ -52,6 +59,38 @@ public class PowerExecutor {
             canceled = true;
         }
     }
+
+
+
+    class PowerAfterTime extends PowerThread {
+        private boolean canceled = false;
+
+        private int power;
+        private long waitTime;
+
+        public PowerAfterTime(int power, long waitTime) {
+            this.power = power;
+            this.waitTime = waitTime;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                LOGGER.info("Waiting for " + waitTime + "ms");
+                Thread.sleep(waitTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ServiceManager.getInstance().getPowerService().setPower(power);
+
+        }
+
+        public void cancel() {
+            canceled = true;
+        }
+    }
+
 
 
 }

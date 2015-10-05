@@ -11,6 +11,7 @@ import lombok.ToString;
 public class RightCurveTrackElement extends TrackElement {
 
     private final static String ELEMENT_NAME = "Right curve ";
+    //TODO: reset on new start
     private static int elementCounter = 1;
 
     @Override

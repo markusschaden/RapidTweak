@@ -5,7 +5,9 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Markus on 25.09.2015.
@@ -15,6 +17,6 @@ import java.util.List;
 public class Race implements Serializable {
 
     private List<TrackElement> track = new CircularArrayList<>();
-    private List<SpeedMeasureTrackElement> speedMeasureTrackElements = new ArrayList<>();
+    private Map<String, SpeedMeasureTrackElement> speedMeasureTrackElements = new HashMap<>();
 
 }

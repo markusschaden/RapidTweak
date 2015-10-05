@@ -14,6 +14,8 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by Markus on 25.09.2015.
  */
@@ -92,6 +94,7 @@ public class TrackModeler implements PowerNotifier {
                 modelerStatus = ModelerStatus.STOPPED;
                 LOGGER.info("Stopping TrackModeler | modelerStatus: " + modelerStatus);
 
+                //TODO: add measurepoint to correct trackelement
 
                 break;
         }
@@ -106,11 +109,23 @@ public class TrackModeler implements PowerNotifier {
 
                 long end = velocityMessage.getTimeStamp();
 
+                String sourceId = "";
+                try {
+                    Field field = velocityMessage.getClass().getDeclaredField("sourceId");
+                    field.setAccessible(true);
+                    sourceId = (String) field.get(velocityMessage);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
                 speedMeasureTrackElement.getSpeeds().put(power, velocityMessage.getVelocity());
                 speedMeasureTrackElement.getPositions().put(power, end - timeRoundBegin);
                 speedMeasureTrackElement.setElementName(speedMeasureTrackElement.getTrackName());
-                race.getSpeedMeasureTrackElements().add(speedMeasureTrackElement);
+                speedMeasureTrackElement.setId(sourceId);
+                race.getSpeedMeasureTrackElements().put(sourceId, speedMeasureTrackElement);
 
                 LOGGER.info("Added SpeedMeasureTrackElement: " + speedMeasureTrackElement.toString());
 
