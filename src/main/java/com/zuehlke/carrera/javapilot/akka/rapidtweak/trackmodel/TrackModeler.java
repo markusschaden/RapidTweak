@@ -33,6 +33,7 @@ public class TrackModeler implements PowerNotifier {
     private long timeRoundBegin;
     private ModelerStatus modelerStatus = ModelerStatus.UNDEFINED;
 
+
     public TrackModeler(Race race) {
         this.race = race;
         heuristicElements = new HeuristicElements();
@@ -54,6 +55,7 @@ public class TrackModeler implements PowerNotifier {
             long end = sensorEvent.getTimeStamp();
             newTrackElement.getPositions().put(power, end - timeRoundBegin);
             currentTrackElement.getDurations().put(power, end - startTrackElement);
+            currentTrackElement.setLatestDuration(end - startTrackElement);
             currentTrackElement.updateTrackElementName();
             currentTrackElement.setId();
             race.getTrack().add(currentTrackElement);
@@ -84,14 +86,35 @@ public class TrackModeler implements PowerNotifier {
             case RUNNING:
                 //Add Last track element
                 long end = roundTimeMessage.getTimestamp();
-                currentTrackElement.getDurations().put(power, end - startTrackElement);
-                currentTrackElement.setLatestDuration(end - startTrackElement);
-                race.getTrack().add(currentTrackElement);
+                if (race.getTrack().get(0).getClass().getCanonicalName().equals(currentTrackElement.getClass().getCanonicalName())) {
 
-                LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
+                    TrackElement beginElement = race.getTrack().get(0);
+                    double firstRound = beginElement.getLatestDuration();
+                    beginElement.getDurations().removeAll(100);
+                    beginElement.getDurations().put(power, (long) (end - startTrackElement + firstRound));
+                    beginElement.setLatestDuration(end - startTrackElement + firstRound);
+
+                    LOGGER.info("Merge start and end: " + beginElement.toString());
+
+                    MonitoringMessage monitoringMessage = new MonitoringMessage(beginElement);
+                    ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+
+                } else {
+                    currentTrackElement.getDurations().put(power, end - startTrackElement);
+                    currentTrackElement.setLatestDuration(end - startTrackElement);
+                    currentTrackElement.updateTrackElementName();
+                    currentTrackElement.setId();
+                    race.getTrack().add(currentTrackElement);
+
+                    LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
+
+                    MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
+                    ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+
+                }
+
                 currentTrackElement = null;
                 startTrackElement = end;
-
 
                 modelerStatus = ModelerStatus.STOPPED;
                 LOGGER.info("Stopping TrackModeler | modelerStatus: " + modelerStatus);
