@@ -18,12 +18,12 @@ public class SpeedMeasureTrackElement extends Element {
     private double speedLimit;
     private String sourceId;
 
-    public String getTrackName() {
-        return ELEMENT_NAME + elementCounter++;
+    public void updateTrackElementName() {
+        elementName = ELEMENT_NAME + elementCounter++;
     }
 
     public static void resetCounter() {
-        elementCounter = 0;
+        elementCounter = 1;
     }
 
     public Double getAveragePosition(int power) {

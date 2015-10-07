@@ -30,7 +30,7 @@ public abstract class Element implements Serializable {
         return getAverageOfList(positions.get(power));
     }
 
-    public abstract String getTrackName();
+    public abstract void updateTrackElementName();
 
     protected Double getAverageOfList(Collection<Long> values) {
 

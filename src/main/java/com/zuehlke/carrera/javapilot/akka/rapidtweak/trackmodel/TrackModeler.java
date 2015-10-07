@@ -54,7 +54,7 @@ public class TrackModeler implements PowerNotifier {
             long end = sensorEvent.getTimeStamp();
             newTrackElement.getPositions().put(power, end - timeRoundBegin);
             currentTrackElement.getDurations().put(power, end - startTrackElement);
-            currentTrackElement.setElementName(currentTrackElement.getTrackName());
+            currentTrackElement.updateTrackElementName();
             currentTrackElement.setId();
             race.getTrack().add(currentTrackElement);
 
@@ -125,6 +125,7 @@ public class TrackModeler implements PowerNotifier {
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
                 speedMeasureTrackElement.getSpeeds().put(power, velocityMessage.getVelocity());
                 speedMeasureTrackElement.getPositions().put(power, end - timeRoundBegin);
+                speedMeasureTrackElement.updateTrackElementName();
                 speedMeasureTrackElement.setSourceId(sourceId);
                 speedMeasureTrackElement.setId();
                 race.getSpeedMeasureTrackElements().put(sourceId, speedMeasureTrackElement);
