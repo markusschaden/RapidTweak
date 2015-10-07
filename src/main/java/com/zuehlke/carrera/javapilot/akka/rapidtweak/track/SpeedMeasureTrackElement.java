@@ -16,11 +16,14 @@ public class SpeedMeasureTrackElement extends Element {
     private final static String ELEMENT_NAME = "SpeedMeasure ";
     private static int elementCounter = 1;
     private double speedLimit;
-    private String id;
+    private String sourceId;
 
-    @Override
     public String getTrackName() {
         return ELEMENT_NAME + elementCounter++;
+    }
+
+    public static void resetCounter() {
+        elementCounter = 0;
     }
 
     public Double getAveragePosition(int power) {

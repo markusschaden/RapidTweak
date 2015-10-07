@@ -14,8 +14,11 @@ public class LeftCurveTrackElement extends TrackElement {
     //TODO: reset on new start
     private static int elementCounter = 1;
 
-    @Override
     public String getTrackName() {
         return ELEMENT_NAME + elementCounter++;
+    }
+
+    public static void resetCounter() {
+        elementCounter = 0;
     }
 }

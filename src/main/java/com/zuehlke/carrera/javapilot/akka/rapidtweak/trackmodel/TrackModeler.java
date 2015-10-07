@@ -55,6 +55,7 @@ public class TrackModeler implements PowerNotifier {
             newTrackElement.getPositions().put(power, end - timeRoundBegin);
             currentTrackElement.getDurations().put(power, end - startTrackElement);
             currentTrackElement.setElementName(currentTrackElement.getTrackName());
+            currentTrackElement.setId();
             race.getTrack().add(currentTrackElement);
 
             LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
@@ -84,6 +85,7 @@ public class TrackModeler implements PowerNotifier {
                 //Add Last track element
                 long end = roundTimeMessage.getTimestamp();
                 currentTrackElement.getDurations().put(power, end - startTrackElement);
+                currentTrackElement.setLatestDuration(end - startTrackElement);
                 race.getTrack().add(currentTrackElement);
 
                 LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
@@ -123,8 +125,8 @@ public class TrackModeler implements PowerNotifier {
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
                 speedMeasureTrackElement.getSpeeds().put(power, velocityMessage.getVelocity());
                 speedMeasureTrackElement.getPositions().put(power, end - timeRoundBegin);
-                speedMeasureTrackElement.setElementName(speedMeasureTrackElement.getTrackName());
-                speedMeasureTrackElement.setId(sourceId);
+                speedMeasureTrackElement.setSourceId(sourceId);
+                speedMeasureTrackElement.setId();
                 race.getSpeedMeasureTrackElements().put(sourceId, speedMeasureTrackElement);
 
                 LOGGER.info("Added SpeedMeasureTrackElement: " + speedMeasureTrackElement.toString());

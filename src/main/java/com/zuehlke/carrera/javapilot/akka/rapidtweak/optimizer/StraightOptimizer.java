@@ -9,8 +9,6 @@ import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 /**
  * Created by Markus on 22.09.2015.
  */
@@ -89,8 +87,7 @@ public class StraightOptimizer implements Optimizer {
     private int calculatePowerIncrease(TrackElement trackElement) {
 
         //TODO: correct power
-        List<Long> durations = (List<Long>) trackElement.getDurations().get(100);
-        double duration = durations.get(durations.size() -1);
+        double duration = trackElement.getLatestDuration();
 
         if (duration > 3000) {
             return 25;

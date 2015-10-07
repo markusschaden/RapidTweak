@@ -19,13 +19,11 @@ public abstract class TrackElement extends Element {
     protected List<SpeedMeasureTrackElement> speedMeasureTrackElements = new ArrayList<>();
     protected List<Integer> speeds = new ArrayList<>();
     protected boolean penaltyOccured;
+    protected double latestDuration;
 
     public Double getAverageDuration(int power) {
 
         return getAverageOfList(durations.get(power));
     }
-
-
-
 
 }

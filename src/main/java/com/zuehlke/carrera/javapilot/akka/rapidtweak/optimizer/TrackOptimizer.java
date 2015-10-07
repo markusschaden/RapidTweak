@@ -83,6 +83,7 @@ public class TrackOptimizer implements PowerNotifier {
 
                 long end = sensorEvent.getTimeStamp();
                 currentTrackElement.getDurations().put(power, end - startTrackElement);
+                currentTrackElement.setLatestDuration(end - startTrackElement);
 
                 TrackElement nextTrackElement = null;
                 //Get the next matching track element from the race track

@@ -13,14 +13,24 @@ import java.util.Collection;
 public abstract class Element implements Serializable {
 
     protected Multimap<Integer, Long> positions = ArrayListMultimap.create();
-    private String elementName;
+    String elementName;
+    private int id;
+    private static int idCounter = 0;
 
-    public abstract String getTrackName();
+    public void setId() {
+        this.id = idCounter++;
+    }
+
+    public static void resetIdCounter() {
+        idCounter = 0;
+    }
 
     public Double getAveragePosition(int power) {
 
         return getAverageOfList(positions.get(power));
     }
+
+    public abstract String getTrackName();
 
     protected Double getAverageOfList(Collection<Long> values) {
 

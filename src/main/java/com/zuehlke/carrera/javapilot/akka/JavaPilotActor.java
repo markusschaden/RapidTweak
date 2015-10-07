@@ -8,6 +8,10 @@ import com.zuehlke.carrera.javapilot.akka.experimental.ThresholdConfiguration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StartMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Element;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.LeftCurveTrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.RightCurveTrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
 import com.zuehlke.carrera.javapilot.config.PilotProperties;
 import com.zuehlke.carrera.javapilot.services.EndpointAnnouncement;
 import com.zuehlke.carrera.javapilot.services.PilotToRelayConnection;
@@ -72,6 +76,10 @@ public class JavaPilotActor extends UntypedActor {
 
             if (message instanceof RaceStartMessage) {
                 ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StartMessage());
+                Element.resetIdCounter();
+                StraightTrackElement.resetCounter();
+                RightCurveTrackElement.resetCounter();
+                LeftCurveTrackElement.resetCounter();
 
                 handleRaceStart((RaceStartMessage) message);
                 handlePowerAction(Configuration.START_VELOCITY);
