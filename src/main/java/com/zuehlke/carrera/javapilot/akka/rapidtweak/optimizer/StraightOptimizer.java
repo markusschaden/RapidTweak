@@ -40,15 +40,19 @@ public class StraightOptimizer implements Optimizer {
             int newPower = 100;
 
             if (trackElement.isPenaltyOccured()) {
-                int speed1 = trackElement.getSpeeds().get(trackElement.getSpeeds().size() - 1);
-                int speed2 = trackElement.getSpeeds().get(trackElement.getSpeeds().size() - 2);
-                newPower = (speed1 + speed2) / 2;
-                LOGGER.info("Speed difference between last two speeds : " + newPower);
+                try {
+                    int speed1 = trackElement.getSpeeds().get(trackElement.getSpeeds().size() - 1);
+                    int speed2 = trackElement.getSpeeds().get(trackElement.getSpeeds().size() - 2);
+                    newPower = (speed1 + speed2) / 2;
+                    LOGGER.info("Speed difference between last two speeds : " + newPower);
 
 
-                trackElement.getSpeeds().remove(trackElement.getSpeeds().size() - 1);
-                trackElement.getSpeeds().remove(trackElement.getSpeeds().size() - 1);
-
+                    trackElement.getSpeeds().remove(trackElement.getSpeeds().size() - 1);
+                    trackElement.getSpeeds().remove(trackElement.getSpeeds().size() - 1);
+                } catch (ArrayIndexOutOfBoundsException a) {
+                    //TODO: do proper handling
+                    newPower = 100;
+                }
             } else {
 
                 if (trackElement.getSpeeds().size() == 0) {
@@ -63,7 +67,7 @@ public class StraightOptimizer implements Optimizer {
 
             trackElement.getSpeeds().add(newPower);
 
-            double duration = trackElement.getAverageDuration(power);
+            double duration = trackElement.getAverageDuration();
 
             double diff = (double) power / (double) newPower;
             LOGGER.debug("Diff: " + diff);

@@ -3,6 +3,7 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Duration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
@@ -82,7 +83,7 @@ public class TrackOptimizer implements PowerNotifier {
             if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
 
                 long end = sensorEvent.getTimeStamp();
-                currentTrackElement.getDurations().put(power, end - startTrackElement);
+                currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
                 currentTrackElement.setLatestDuration(end - startTrackElement);
 
                 TrackElement nextTrackElement = null;

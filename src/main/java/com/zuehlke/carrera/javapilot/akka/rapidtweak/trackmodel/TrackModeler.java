@@ -3,6 +3,7 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Duration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
@@ -54,7 +55,7 @@ public class TrackModeler implements PowerNotifier {
 
             long end = sensorEvent.getTimeStamp();
             newTrackElement.getPositions().put(power, end - timeRoundBegin);
-            currentTrackElement.getDurations().put(power, end - startTrackElement);
+            currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
             currentTrackElement.setLatestDuration(end - startTrackElement);
             currentTrackElement.updateTrackElementName();
             currentTrackElement.setId();
@@ -90,8 +91,8 @@ public class TrackModeler implements PowerNotifier {
 
                     TrackElement beginElement = race.getTrack().get(0);
                     double firstRound = beginElement.getLatestDuration();
-                    beginElement.getDurations().removeAll(100);
-                    beginElement.getDurations().put(power, (long) (end - startTrackElement + firstRound));
+                    beginElement.getDurations().clear();
+                    beginElement.getDurations().add(new Duration(power, (long) (end - startTrackElement + firstRound)));
                     beginElement.setLatestDuration(end - startTrackElement + firstRound);
 
                     LOGGER.info("Merge start and end: " + beginElement.toString());
@@ -100,7 +101,7 @@ public class TrackModeler implements PowerNotifier {
                     ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
                 } else {
-                    currentTrackElement.getDurations().put(power, end - startTrackElement);
+                    currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
                     currentTrackElement.setLatestDuration(end - startTrackElement);
                     currentTrackElement.updateTrackElementName();
                     currentTrackElement.setId();

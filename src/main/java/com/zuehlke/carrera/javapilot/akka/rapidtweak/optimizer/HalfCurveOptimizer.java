@@ -37,7 +37,7 @@ public class HalfCurveOptimizer implements Optimizer {
             int newPower = 0;
             int maxPower = 150;
 
-            Double duration = trackElement.getAverageDuration(100);
+            Double duration = trackElement.getAverageDuration();
 
             if (trackElement.getSpeeds().size() == 0) {
                 newPower = Configuration.START_VELOCITY + calculatePowerIncrease(trackElement);
@@ -70,7 +70,7 @@ public class HalfCurveOptimizer implements Optimizer {
     private int calculatePowerIncrease(TrackElement trackElement) {
 
         //TODO: correct power
-        double duration = trackElement.getAverageDuration(100);
+        double duration = trackElement.getAverageDuration();
 
         return 10;
     }
