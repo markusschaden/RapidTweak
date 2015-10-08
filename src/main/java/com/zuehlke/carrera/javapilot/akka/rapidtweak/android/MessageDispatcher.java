@@ -13,7 +13,7 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
     private final Logger LOGGER = LoggerFactory.getLogger(MessageDispatcher.class);
     private List<MessageEndpoint> endpoints = new ArrayList<>();
     private AndroidAppWebSocketServer androidAppWebSocketServer;
-
+    private Serializator<Message> serializator = new Serializator<>();
     public MessageDispatcher() {
 
     }
@@ -33,7 +33,6 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
 
             try {
                 Class clazz = Class.forName(className);
-                Serializator<Message> serializator = new Serializator<>();
                 Message rawMessage = serializator.deserialize(data, clazz);
                 dispatchMessge(rawMessage);
 
@@ -66,17 +65,16 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
     public void sendMessage(Message message) {
         if (androidAppWebSocketServer != null) {
             LOGGER.info("Send Message: " + message.toString());
-            /*Thread sendMessageThread = new Thread(() -> {
-                String json = new Gson().toJson(message);
+            Thread sendMessageThread = new Thread(() -> {
+                String json = serializator.serialize(message);
                 String className = message.getClass().getCanonicalName();
                 androidAppWebSocketServer.sendToAll(className + "|" + json);
             });
-            sendMessageThread.start();*/
+            sendMessageThread.start();
 
-            Serializator<Message> serializator = new Serializator<>();
-            String json = serializator.serialize(message);
+            /*String json = serializator.serialize(message);
             String className = message.getClass().getCanonicalName();
-            androidAppWebSocketServer.sendToAll(className + "|" + json);
+            androidAppWebSocketServer.sendToAll(className + "|" + json);*/
         } else {
             LOGGER.error("Cant send message, WebSocketServer is not running");
         }

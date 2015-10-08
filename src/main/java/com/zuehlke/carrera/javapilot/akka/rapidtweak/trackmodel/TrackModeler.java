@@ -90,9 +90,9 @@ public class TrackModeler implements PowerNotifier {
                 if (race.getTrack().get(0).getClass().getCanonicalName().equals(currentTrackElement.getClass().getCanonicalName())) {
 
                     TrackElement beginElement = race.getTrack().get(0);
-                    double firstRound = beginElement.getLatestDuration();
+                    long firstRound = beginElement.getLatestDuration();
                     beginElement.getDurations().clear();
-                    beginElement.getDurations().add(new Duration(power, (long) (end - startTrackElement + firstRound)));
+                    beginElement.getDurations().add(new Duration(power, end - startTrackElement + firstRound));
                     beginElement.setLatestDuration(end - startTrackElement + firstRound);
 
                     LOGGER.info("Merge start and end: " + beginElement.toString());
@@ -149,6 +149,7 @@ public class TrackModeler implements PowerNotifier {
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
                 speedMeasureTrackElement.getSpeeds().put(power, velocityMessage.getVelocity());
                 speedMeasureTrackElement.getPositions().put(power, end - timeRoundBegin);
+                speedMeasureTrackElement.setLastSpeed(velocityMessage.getVelocity());
                 speedMeasureTrackElement.updateTrackElementName();
                 speedMeasureTrackElement.setSourceId(sourceId);
                 speedMeasureTrackElement.setId();

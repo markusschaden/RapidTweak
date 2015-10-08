@@ -17,7 +17,7 @@ public abstract class TrackElement extends Element {
     protected List<SpeedMeasureTrackElement> speedMeasureTrackElements = new ArrayList<>();
     protected List<Integer> speeds = new ArrayList<>();
     protected boolean penaltyOccured;
-    protected double latestDuration;
+    protected long latestDuration;
 
     public long getBestTime() {
         long time = 999999;

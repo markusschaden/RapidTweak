@@ -147,6 +147,7 @@ public class TrackOptimizer implements PowerNotifier {
 
         element.getSpeeds().put(power, message.getVelocity());
         element.getPositions().put(power, end - timeRoundBegin);
+        element.setLastSpeed(message.getVelocity());
 
         velocityCounter++;
 

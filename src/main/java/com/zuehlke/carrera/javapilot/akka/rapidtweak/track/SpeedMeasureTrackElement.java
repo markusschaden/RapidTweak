@@ -16,6 +16,7 @@ public class SpeedMeasureTrackElement extends Element {
     private final static String ELEMENT_NAME = "SpeedMeasure ";
     private static int elementCounter = 1;
     private double speedLimit;
+    private double lastSpeed;
     private String sourceId;
 
     public void updateTrackElementName() {
