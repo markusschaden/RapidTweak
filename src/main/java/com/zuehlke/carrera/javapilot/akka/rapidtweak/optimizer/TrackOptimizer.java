@@ -69,7 +69,7 @@ public class TrackOptimizer implements PowerNotifier {
 
         com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage roundTimeMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage();
         roundTimeMessage.setRoundTime(message.getRoundDuration());
-        roundTimeMessage.setRace(race);
+        //roundTimeMessage.setRace(race);
         ServiceManager.getInstance().getMessageDispatcher().sendMessage(roundTimeMessage);
     }
 

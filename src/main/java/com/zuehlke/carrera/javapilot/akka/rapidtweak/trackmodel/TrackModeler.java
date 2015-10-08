@@ -117,6 +117,10 @@ public class TrackModeler implements PowerNotifier {
                 currentTrackElement = null;
                 startTrackElement = end;
 
+                com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage roundMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage();
+                roundMessage.setRoundTime(roundTimeMessage.getRoundDuration());
+                ServiceManager.getInstance().getMessageDispatcher().sendMessage(roundMessage);
+
                 modelerStatus = ModelerStatus.STOPPED;
                 LOGGER.info("Stopping TrackModeler | modelerStatus: " + modelerStatus);
 
