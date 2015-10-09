@@ -3,6 +3,8 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.power;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PowerMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ public class PowerService {
             powerNotifier.onNewPower(power);
         }
         pilot.tell(new PowerAction(power), actor.getSelf());
+        ServiceManager.getInstance().getMessageDispatcher().sendMessage(new PowerMessage(power));
     }
 
     public void addPowerNotifier(PowerNotifier powerNotifier) {

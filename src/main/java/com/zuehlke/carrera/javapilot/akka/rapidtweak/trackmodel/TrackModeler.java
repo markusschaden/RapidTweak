@@ -151,7 +151,7 @@ public class TrackModeler implements PowerNotifier {
                 }
 
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
-                speedMeasureTrackElement.getSpeeds().put(power, velocityMessage.getVelocity());
+                speedMeasureTrackElement.getSpeeds().add(velocityMessage.getVelocity());
                 speedMeasureTrackElement.getPositions().put(power, end - timeRoundBegin);
                 speedMeasureTrackElement.setLastSpeed(velocityMessage.getVelocity());
                 speedMeasureTrackElement.updateTrackElementName();

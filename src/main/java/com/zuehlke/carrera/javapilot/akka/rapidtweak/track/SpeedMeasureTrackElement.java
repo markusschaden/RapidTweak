@@ -5,6 +5,9 @@ import com.google.common.collect.Multimap;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Markus on 25.09.2015.
  */
@@ -12,7 +15,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class SpeedMeasureTrackElement extends Element {
 
-    protected Multimap<Integer, Double> speeds = ArrayListMultimap.create();
+    protected List<Double> speeds = new ArrayList<>();
     private final static String ELEMENT_NAME = "SpeedMeasure ";
     private static int elementCounter = 1;
     private double speedLimit;
@@ -29,6 +32,6 @@ public class SpeedMeasureTrackElement extends Element {
 
     public Double getAveragePosition(int power) {
 
-        return getAverageOfListDouble(speeds.get(power));
+        return getAverageOfListDouble(speeds);
     }
 }

@@ -80,7 +80,8 @@ public class JavaPilotActor extends UntypedActor {
                 SpeedMeasureTrackElement.resetCounter();
 
                 handleRaceStart((RaceStartMessage) message);
-                handlePowerAction(Configuration.START_VELOCITY);
+                ServiceManager.getInstance().getPowerService().setPower((Configuration.START_VELOCITY));
+
 
             } else if (message instanceof RaceStopMessage) {
                 ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StopMessage());

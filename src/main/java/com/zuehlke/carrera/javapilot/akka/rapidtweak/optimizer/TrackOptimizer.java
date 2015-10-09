@@ -126,6 +126,10 @@ public class TrackOptimizer implements PowerNotifier {
 
         SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(message.getBarrier());
         element.setSpeedLimit(message.getSpeedLimit());
+
+        com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage penaltyMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage(message.getBarrier());
+        ServiceManager.getInstance().getMessageDispatcher().sendMessage(penaltyMessage);
+
     }
 
     public void onVelocityMessage(VelocityMessage message) {
@@ -145,7 +149,7 @@ public class TrackOptimizer implements PowerNotifier {
         SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(sourceId);
         //SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(velocityCounter);
 
-        element.getSpeeds().put(power, message.getVelocity());
+        element.getSpeeds().add(message.getVelocity());
         element.getPositions().put(power, end - timeRoundBegin);
         element.setLastSpeed(message.getVelocity());
 
