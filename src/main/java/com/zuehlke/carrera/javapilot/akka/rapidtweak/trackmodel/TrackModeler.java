@@ -90,32 +90,33 @@ public class TrackModeler implements PowerNotifier {
                 if (race.getTrack().get(0).getClass().getCanonicalName().equals(currentTrackElement.getClass().getCanonicalName())) {
 
                     TrackElement beginElement = race.getTrack().get(0);
+                    beginElement.setBegin(startTrackElement);
                     long firstRound = beginElement.getLatestDuration();
                     beginElement.getDurations().clear();
-                    beginElement.getDurations().add(new Duration(power, end - startTrackElement + firstRound));
-                    beginElement.setLatestDuration(end - startTrackElement + firstRound);
+                    //beginElement.getDurations().add(new Duration(power, end - startTrackElement + firstRound));
+                    //beginElement.setLatestDuration(end - startTrackElement + firstRound);
 
                     LOGGER.info("Merge start and end: " + beginElement.toString());
 
-                    MonitoringMessage monitoringMessage = new MonitoringMessage(beginElement);
-                    ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+                    //MonitoringMessage monitoringMessage = new MonitoringMessage(beginElement);
+                    //ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
                 } else {
-                    currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
-                    currentTrackElement.setLatestDuration(end - startTrackElement);
+                    //currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
+                    //currentTrackElement.setLatestDuration(end - startTrackElement);
                     currentTrackElement.updateTrackElementName();
                     currentTrackElement.setId();
                     race.getTrack().add(currentTrackElement);
 
                     LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
 
-                    MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
-                    ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+                    //MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
+                    //ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
                 }
 
-                currentTrackElement = null;
-                startTrackElement = end;
+                //currentTrackElement = null;
+                //startTrackElement = end;
 
                 com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage roundMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage();
                 roundMessage.setRoundTime(roundTimeMessage.getRoundDuration());

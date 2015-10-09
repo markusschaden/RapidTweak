@@ -18,6 +18,7 @@ public abstract class TrackElement extends Element {
     protected List<Integer> speeds = new ArrayList<>();
     protected boolean penaltyOccured;
     protected long latestDuration;
+    private long begin;
 
     public long getBestTime() {
         long time = 999999;
@@ -43,5 +44,4 @@ public abstract class TrackElement extends Element {
         return result / count;
 
     }
-
 }

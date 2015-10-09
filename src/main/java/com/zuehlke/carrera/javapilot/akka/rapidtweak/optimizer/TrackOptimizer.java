@@ -83,8 +83,18 @@ public class TrackOptimizer implements PowerNotifier {
             if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
 
                 long end = sensorEvent.getTimeStamp();
-                currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
-                currentTrackElement.setLatestDuration(end - startTrackElement);
+
+                if (currentTrackElement.getBegin() < 1) {
+                    currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
+                    currentTrackElement.setLatestDuration(end - startTrackElement);
+                } else {
+                    currentTrackElement.getDurations().add(new Duration(power, end - currentTrackElement.getBegin()));
+                    currentTrackElement.setLatestDuration(end - currentTrackElement.getBegin());
+                    currentTrackElement.setBegin(0);
+                }
+                MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
+                ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+
 
                 TrackElement nextTrackElement = null;
                 //Get the next matching track element from the race track
@@ -97,8 +107,8 @@ public class TrackOptimizer implements PowerNotifier {
                 LOGGER.info("Recognsied TrackElement: " + nextTrackElement.toString());
                 fireOptimizerEvents(nextTrackElement, segementCounter);
 
-                MonitoringMessage monitoringMessage = new MonitoringMessage(nextTrackElement);
-                ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+                //MonitoringMessage monitoringMessage2 = new MonitoringMessage(nextTrackElement);
+                //ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage2);
 
                 nextTrackElement.getPositions().put(power, end - timeRoundBegin);
 
