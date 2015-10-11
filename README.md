@@ -4,6 +4,9 @@ Challenge Project 2015 | HSR
 ## RapidTweakApp
 https://github.com/markusschaden/RapidTweakAndroidApp
 
+<image src="https://raw.githubusercontent.com/markusschaden/RapidTweak/develop/docs/App_Screenshot_1.png" height="700" />
+<image src="https://raw.githubusercontent.com/markusschaden/RapidTweak/develop/docs/App_Screenshot_2.png" height="700" />
+
 #Work Log
 
 | Datum      | Zeit [h] | Was                                                                                                                                                                                                                               | Wer    |
