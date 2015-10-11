@@ -1,22 +1,46 @@
 # RapidTweak
 Challenge Project 2015 | HSR
 
-
-
-# Arbeitsjournal
-
-##1. Woche
-
-
-##2. Woche
-
-
-##3. Woche
-
-
+## RapidTweakApp
+https://github.com/markusschaden/RapidTweakAndroidApp
 
 #Work Log
 
-Wer | Datum | Stunden | Was
---- | --- | --- | ---
-Markus | 21.09.2015 | 4h | Einlesen & Track Recognition
+| Datum      | Zeit [h] | Was                                                                                                                                                                                                                               | Wer    |
+|------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| 21.09.2015 | 4        | Hands on. Erste Version eines Rennstreckenerkennungsalgorithmus                                                                                                                                                                   | MS     |
+| 23.09.2015 | 4        | Diskussion, weiteres Vorgehen, Knowledge Transfer                                                                                                                                                                                 | NH, MS |
+| 25.09.2015 | 4        | UML Diagramme, komplettes Code refactoring, erste Version des StraightTrackElement Optimizers                                                                                                                                     | MS     |
+| 28.09.2015 | 4        | Bug fixes                                                                                                                                                                                                                         | MS     |
+|            |          | Websocket Server eingebaut                                                                                                                                                                                                        |        |
+|            |          | Draft Android App                                                                                                                                                                                                                 |        |
+| 29.09.2015 | 2        | Erkläuterung aktueller Stand Projekt                                                                                                                                                                                              | MS, NH |
+|            |          | Synchronisierung GitHub Projekte                                                                                                                                                                                                  |        |
+|            |          | Init Besprechung RapidTweakApp                                                                                                                                                                                                    |        |
+| 29.09.2015 | 2        | WireFrame RapidTweakApp                                                                                                                                                                                                           | NH     |
+|            |          | Implementierungs Überlegungen (Services etc.)                                                                                                                                                                                     |        |
+| 30.09.2015 | 2        | WebSocketServer implementiert                                                                                                                                                                                                     | MS     |
+|            |          | Serialisierung von Track Elementen                                                                                                                                                                                                |        |
+| 30.09.2015 | 2        | Datenmodelle abgeglichen (Server und App)                                                                                                                                                                                         | MS, NH |
+|            |          | Logik von Server in App eingebaut (Serialisierung / Deserialisierung)                                                                                                                                                             |        |
+| 30.09.2015 | 4        | RapidTweakApp Init der Activities und Services                                                                                                                                                                                    | NH     |
+|            |          | Grund Layout Design                                                                                                                                                                                                               |        |
+| 30.09.2015 | 2        | Erweiterungen                                                                                                                                                                                                                     |        |
+|            | MS, NH   |                                                                                                                                                                                                                                   |        |
+| 04.10.2015 | 4        | Benutzung des private Fields sourceId zur Zuordnung von SpeedBarriers und Penalty Messages                                                                                                                                        | MS     |
+|            |          | Erste Version eines HalfRoundOptimizer, zur Beschleunigung nach der ersten Hälfte der Kurve                                                                                                                                       |        |
+| 06.10.2015 | 1        | Echte Daten analysiert. Zusätzliche Sensordaten angesehen. Keine Möglichkeit gefunden diese zu verwenden. Schwanken viel zu fest. (Siehe Excel Tabelle sensor_daten_analyse.xlsx)                                                 | MS     |
+| 06.10.2015 | 2        | App Trackelements Activities ausgebaut                                                                                                                                                                                            | NH     |
+| 07.10.2015 | 5        | App MonitoringMessageService ausgebaut und erstes Mal das Visitor-Pattern angewandt                                                                                                                                               | NH     |
+|            |          | Über lustigen Bug gestolpert und sehr aufgeregt über den Log Viewer im Android Studio welcher mir meine Messages nur mit nachdruck anzeigen wollte!!!                                                                             |        |
+|            |          | Erste Version der TrackElements Activity fertiggestellt. WOOHOO!!! :-)                                                                                                                                                            |        |
+| 07.10.2015 | 3        | Diverse Bugs in der Autopilot Software behoben. Streckenabschnitte werden nun korrekt mit einer ID und zusätzlich mit einer Streckentypen ID (Right Curve 1)ausgestattet, welche pro Rennen wieder bei 0 respektiv bei 1 beginnt. | MS     |
+|            |          | Merge von Start und Endelement, falls sie gleich sind.                                                                                                                                                                            |        |
+| 08.10.2015 | 6        | TrackElements Cards mit Icon (neue Vector Drawables) ausstatten                                                                                                                                                                   | NH, MS |
+|            |          | SpeedMeasure auch reinnehmen (Zeigt Geschwindigkeit an)                                                                                                                                                                           |        |
+|            |          | Aktuelle Runde und Rundenzeit oberhalb der Recyclerview                                                                                                                                                                           |        |
+|            |          | Start/Stop neues Race resetted Daten in Application                                                                                                                                                                               |        |
+|            |          | TrackElements -> Race (imDomain) ArrayList<Arraylist<Element>> für History                                                                                                                                                        |        |
+| 09.10.2015 | 2        | SharedPreferences in SettingsActivity eingebaut um Server Adresse zu ändern                                                                                                                                                       | NH     |
+|            |          | Websocket Connection Logik umgebaut mit SharedPreferences                                                                                                                                                                         |        |
+| 09.10.2015 | 2        | History von Geschwindigkeiten und Duration eingebaut. SpeedMeasure Elemente werden für eine Runde rot, falls ein Penalty passiert ist.                                                                                            | MS     |
