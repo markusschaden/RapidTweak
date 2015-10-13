@@ -44,11 +44,13 @@ public class TrackOptimizer implements PowerNotifier {
         this.race = race;
         StraightOptimizer straightOptimizer = new StraightOptimizer(race);
         HalfCurveOptimizer halfCurveOptimizer = new HalfCurveOptimizer(race);
+        ExperimentOptimizer experimentOptimizer = new ExperimentOptimizer(race);
         straightOptimizer.setActive(true);
         heuristicElements = new HeuristicElements();
 
-        optimizers.add(straightOptimizer);
-        optimizers.add(halfCurveOptimizer);
+        //optimizers.add(straightOptimizer);
+        //optimizers.add(halfCurveOptimizer);
+        optimizers.add(experimentOptimizer);
     }
 
 
@@ -169,8 +171,6 @@ public class TrackOptimizer implements PowerNotifier {
 
         MonitoringMessage monitoringMessage = new MonitoringMessage(element);
         ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
-
-
     }
 
     @Override
