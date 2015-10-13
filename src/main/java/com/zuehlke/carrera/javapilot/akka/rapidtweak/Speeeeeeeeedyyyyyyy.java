@@ -49,8 +49,11 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
             routingService.onPenaltyMessage((PenaltyMessage) message);
         } else if (message instanceof RoundTimeMessage) {
             routingService.onRoundTimeMessage((RoundTimeMessage)message);
+        } else if (message instanceof RaceStopMessage) {
+            routingService.onRaceStop((RaceStopMessage) message);
         } else if (message instanceof RaceStartMessage){
             pilot.tell(new PowerAction(100), getSelf());
+            routingService.onRaceStart((RaceStartMessage) message);
         } else {
 
         }

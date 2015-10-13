@@ -1,10 +1,8 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.ExperimentEntry;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.*;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,33 +13,31 @@ import java.util.List;
 /**
  * Created by Markus on 22.09.2015.
  */
-public class ExperimentOptimizer implements Optimizer {
+public class ExperimentCurveOptimizer implements Optimizer {
 
     private Race race;
-    private final Logger LOGGER = LoggerFactory.getLogger(ExperimentOptimizer.class);
+    private boolean active = false;
+    private final Logger LOGGER = LoggerFactory.getLogger(ExperimentCurveOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = 255;
+    private final int MAX_POWER = 150;
     private final int MIN_POWER = 130;
 
-    public ExperimentOptimizer(Race race) {
+
+    public ExperimentCurveOptimizer(Race race) {
         this.race = race;
     }
 
     @Override
     public void onPenalityEvent(PenaltyMessage message) {
         if (lastTrackElement instanceof StraightTrackElement) {
-            List<ExperimentEntry> list = race.getStraightExperiment().get(lastTrackElement.getId());
-            if (list == null) {
-                list = new ArrayList<>();
-            }
-            list.get(list.size() - 1).setPenaltyOccured(true);
+            lastTrackElement.setPenaltyOccured(true);
         }
     }
 
     @Override
     public void onTrackElementChange(TrackElement trackElement, int position) {
         lastTrackElement = trackElement;
-        if (trackElement instanceof StraightTrackElement) {
+        if (trackElement instanceof RightCurveTrackElement || trackElement instanceof LeftCurveTrackElement) {
             int id = trackElement.getId();
             long duration = trackElement.getDurations().get(0).getTime();
 
@@ -75,8 +71,13 @@ public class ExperimentOptimizer implements Optimizer {
             PowerExecutor powerExecutor = new PowerExecutor();
             powerExecutor.setPowerFor(MAX_POWER, accelerationTime, MIN_POWER);
         }
+        //PowerService.getInstance().setPower(140);
     }
 
+    @Override
+    public void setActive(boolean active) {
+
+    }
 
     private boolean checkSpeed(List<ExperimentEntry> list, long newPower) {
         for (ExperimentEntry ee : list) {
@@ -88,9 +89,12 @@ public class ExperimentOptimizer implements Optimizer {
     }
 
 
-    @Override
-    public void setActive(boolean active) {
+    private int calculatePowerIncrease(TrackElement trackElement) {
 
+        //TODO: correct power
+        double duration = trackElement.getAverageDuration();
+
+        return 10;
     }
 
 }

@@ -18,12 +18,16 @@ import com.zuehlke.carrera.relayapi.messages.TrainingRequest;
 import com.zuehlke.carrera.relayapi.messages.TrainingResponse;
 import com.zuehlke.carrera.simulator.config.SimulatorProperties;
 import com.zuehlke.carrera.simulator.model.RaceTrackSimulatorSystem;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +40,7 @@ import java.util.List;
 
 @Configuration
 @ComponentScan
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude=MongoAutoConfiguration.class)
 @EnableConfigurationProperties({SimulatorProperties.class})  // loaded from classpath:/application.yml
 @EnableWebSocketMessageBroker
 public class PilotApplication implements CommandLineRunner{

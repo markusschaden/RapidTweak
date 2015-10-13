@@ -6,15 +6,13 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.MessageEndpoint;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ConfigurationMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpeedMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.dal.RaceDatabase;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.TrackModeler;
-import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
-import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
-import com.zuehlke.carrera.relayapi.messages.SensorEvent;
-import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
+import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +24,14 @@ public class RoutingService implements MessageEndpoint {
     Race race;
     TrackModeler trackModeler;
     TrackOptimizer trackOptimizer;
+    RaceDatabase raceDatabase;
 
     public RoutingService(ActorRef pilot, UntypedActor actor) {
         race = new Race();
         trackModeler = new TrackModeler(race);
         trackModeler.setPower(100);
         trackOptimizer = new TrackOptimizer(race);
+        raceDatabase = new RaceDatabase();
 
         ServiceManager.getInstance().getPowerService().init(pilot, actor);
         ServiceManager.getInstance().getPowerService().addPowerNotifier(trackModeler);
@@ -128,5 +128,13 @@ public class RoutingService implements MessageEndpoint {
     @Override
     public void onRoundTimeMessage(com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage message) {
         LOGGER.warn("This Message type is not supported");
+    }
+
+    public void onRaceStop(RaceStopMessage message) {
+        raceDatabase.insertRace(race);
+    }
+
+    public void onRaceStart(RaceStartMessage message) {
+        race.setTrackId(message.getTrackId());
     }
 }

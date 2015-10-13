@@ -45,12 +45,14 @@ public class TrackOptimizer implements PowerNotifier {
         StraightOptimizer straightOptimizer = new StraightOptimizer(race);
         HalfCurveOptimizer halfCurveOptimizer = new HalfCurveOptimizer(race);
         ExperimentOptimizer experimentOptimizer = new ExperimentOptimizer(race);
+        ExperimentCurveOptimizer curveExperimentOptimizer = new ExperimentCurveOptimizer(race);
         straightOptimizer.setActive(true);
         heuristicElements = new HeuristicElements();
 
         //optimizers.add(straightOptimizer);
         //optimizers.add(halfCurveOptimizer);
         optimizers.add(experimentOptimizer);
+        optimizers.add(curveExperimentOptimizer);
     }
 
 

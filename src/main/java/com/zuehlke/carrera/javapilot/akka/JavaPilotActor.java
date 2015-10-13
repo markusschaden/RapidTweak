@@ -82,12 +82,14 @@ public class JavaPilotActor extends UntypedActor {
                 handleRaceStart((RaceStartMessage) message);
                 ServiceManager.getInstance().getPowerService().setPower((Configuration.START_VELOCITY));
 
+                sensorEntryPoint.forward(message, getContext());
 
             } else if (message instanceof RaceStopMessage) {
                 ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StopMessage());
 
                 handleRaceStop((RaceStopMessage) message);
 
+                sensorEntryPoint.forward(message, getContext());
             } else if (message instanceof SensorEvent) {
                 handleSensorEvent((SensorEvent) message);
 
