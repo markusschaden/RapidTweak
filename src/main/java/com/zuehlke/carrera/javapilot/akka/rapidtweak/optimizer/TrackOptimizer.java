@@ -1,6 +1,8 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RacePositionMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Duration;
@@ -39,6 +41,8 @@ public class TrackOptimizer implements PowerNotifier {
     private int segementCounter = 0;
     private long timeRoundBegin;
     private int velocityCounter = 0;
+    private TrackCoordinateCalculator trackCoordinateCalculator;
+    private PositionUpdateThread positionUpdateThread;
 
     public TrackOptimizer(Race race) {
         this.race = race;
@@ -53,6 +57,8 @@ public class TrackOptimizer implements PowerNotifier {
         //optimizers.add(halfCurveOptimizer);
         optimizers.add(experimentOptimizer);
         optimizers.add(curveExperimentOptimizer);
+
+        this.trackCoordinateCalculator = new TrackCoordinateCalculator();
     }
 
 
@@ -75,10 +81,17 @@ public class TrackOptimizer implements PowerNotifier {
         roundTimeMessage.setRoundTime(message.getRoundDuration());
         //roundTimeMessage.setRace(race);
         ServiceManager.getInstance().getMessageDispatcher().sendMessage(roundTimeMessage);
+
+        trackCoordinateCalculator = new TrackCoordinateCalculator();
     }
 
 
     public void onSensorEvent(SensorEvent sensorEvent) {
+        trackCoordinateCalculator.calculatePosition(sensorEvent);
+        if (positionUpdateThread == null) {
+            positionUpdateThread = new PositionUpdateThread();
+            positionUpdateThread.start();
+        }
 
         if (currentTrackElement != null) {
 
@@ -179,5 +192,22 @@ public class TrackOptimizer implements PowerNotifier {
     public void onNewPower(int power) {
         //TODO: BUG: power is set back to 100 after acceleration. => Wrong position and distance data for key 100
         this.power = power;
+    }
+
+
+    class PositionUpdateThread extends Thread {
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                RacePositionMessage racePositionMessage = new RacePositionMessage(trackCoordinateCalculator.getLastPosition());
+                ServiceManager.getInstance().getMessageDispatcher().sendMessage(racePositionMessage);
+            }
+        }
     }
 }

@@ -2,10 +2,13 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.routing;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.ClientHandler;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.MessageEndpoint;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ConfigurationMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpeedMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.dal.RaceDatabase;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
@@ -13,10 +16,11 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.TrackModeler;
 import com.zuehlke.carrera.relayapi.messages.*;
+import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RoutingService implements MessageEndpoint {
+public class RoutingService implements MessageEndpoint, ClientHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RoutingService.class);
 
@@ -25,10 +29,12 @@ public class RoutingService implements MessageEndpoint {
     TrackModeler trackModeler;
     TrackOptimizer trackOptimizer;
     RaceDatabase raceDatabase;
+    TrackCoordinateCalculator trackModelerCoordinateCalculator;
 
     public RoutingService(ActorRef pilot, UntypedActor actor) {
         race = new Race();
-        trackModeler = new TrackModeler(race);
+        trackModelerCoordinateCalculator = new TrackCoordinateCalculator();
+        trackModeler = new TrackModeler(race, trackModelerCoordinateCalculator);
         trackModeler.setPower(100);
         trackOptimizer = new TrackOptimizer(race);
         raceDatabase = new RaceDatabase();
@@ -38,6 +44,7 @@ public class RoutingService implements MessageEndpoint {
         ServiceManager.getInstance().getPowerService().addPowerNotifier(trackOptimizer);
 
         ServiceManager.getInstance().getMessageDispatcher().addMessageEndpoint(this);
+        ServiceManager.getInstance().getMessageDispatcher().addNewClientHandler(this);
     }
 
     public void onPenaltyMessage(PenaltyMessage message) {
@@ -136,5 +143,13 @@ public class RoutingService implements MessageEndpoint {
 
     public void onRaceStart(RaceStartMessage message) {
         race.setTrackId(message.getTrackId());
+    }
+
+    @Override
+    public void onOpen(WebSocket webSocket) {
+        if (raceStatus == RaceStatus.RACE) {
+            RaceDrawerMessage raceDrawerMessage = new RaceDrawerMessage(trackModelerCoordinateCalculator.getTrack());
+            ServiceManager.getInstance().getMessageDispatcher().sendSingleMessage(webSocket, raceDrawerMessage);
+        }
     }
 }

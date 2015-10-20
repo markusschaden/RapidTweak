@@ -1,6 +1,8 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Duration;
@@ -33,14 +35,18 @@ public class TrackModeler implements PowerNotifier {
     private int power;
     private long timeRoundBegin;
     private ModelerStatus modelerStatus = ModelerStatus.UNDEFINED;
+    private TrackCoordinateCalculator trackCoordinateCalculator;
 
-
-    public TrackModeler(Race race) {
+    public TrackModeler(Race race, TrackCoordinateCalculator trackCoordinateCalculator) {
         this.race = race;
         heuristicElements = new HeuristicElements();
+        this.trackCoordinateCalculator = trackCoordinateCalculator;
     }
 
     public void onSensorEvent(SensorEvent sensorEvent) {
+        if (modelerStatus == ModelerStatus.RUNNING) {
+            trackCoordinateCalculator.onSensorEvent(sensorEvent);
+        }
 
         if (currentTrackElement == null) {
             currentTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
@@ -101,6 +107,8 @@ public class TrackModeler implements PowerNotifier {
                     //MonitoringMessage monitoringMessage = new MonitoringMessage(beginElement);
                     //ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 
+                    RaceDrawerMessage raceDrawerMessage = new RaceDrawerMessage(trackCoordinateCalculator.getTrack());
+                    ServiceManager.getInstance().getMessageDispatcher().sendMessage(raceDrawerMessage);
                 } else {
                     //currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
                     //currentTrackElement.setLatestDuration(end - startTrackElement);

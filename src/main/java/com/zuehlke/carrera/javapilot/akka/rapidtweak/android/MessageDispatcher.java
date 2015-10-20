@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.android;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.*;
+import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
 
     private final Logger LOGGER = LoggerFactory.getLogger(MessageDispatcher.class);
     private List<MessageEndpoint> endpoints = new ArrayList<>();
+    private List<ClientHandler> clientHandlers = new ArrayList<>();
     private AndroidAppWebSocketServer androidAppWebSocketServer;
     private Serializator<Message> serializator = new Serializator<>();
     public MessageDispatcher() {
@@ -43,6 +45,13 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
 
         } else {
             LOGGER.error("Invalid message: " + message);
+        }
+    }
+
+    @Override
+    public void onOpen(WebSocket webSocket) {
+        for (ClientHandler clientHandler : clientHandlers) {
+            clientHandler.onOpen(webSocket);
         }
     }
 
@@ -86,6 +95,28 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
             androidAppWebSocketServer = new AndroidAppWebSocketServer(port, this);
             androidAppWebSocketServer.start();
             LOGGER.info("WebSocketServer listening on port " + port);
+        }
+    }
+
+    public void addNewClientHandler(ClientHandler clientHandler) {
+        clientHandlers.add(clientHandler);
+    }
+
+    public void sendSingleMessage(WebSocket webSocket, RaceDrawerMessage raceDrawerMessage) {
+        if (androidAppWebSocketServer != null) {
+            LOGGER.info("Send Message: " + raceDrawerMessage.toString());
+            Thread sendMessageThread = new Thread(() -> {
+                String json = serializator.serialize(raceDrawerMessage);
+                String className = raceDrawerMessage.getClass().getCanonicalName();
+                androidAppWebSocketServer.send(webSocket, className + "|" + json);
+            });
+            sendMessageThread.start();
+
+            /*String json = serializator.serialize(message);
+            String className = message.getClass().getCanonicalName();
+            androidAppWebSocketServer.sendToAll(className + "|" + json);*/
+        } else {
+            LOGGER.error("Cant send message, WebSocketServer is not running");
         }
     }
 }

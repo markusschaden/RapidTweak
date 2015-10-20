@@ -52,7 +52,14 @@ public class AndroidAppWebSocketServer extends org.java_websocket.server.WebSock
         }
     }
 
+    public void send(WebSocket webSocket, String s) {
+        webSocket.send(s);
+    }
+
+
     interface MessageHandler {
         void onMessage(String message);
+
+        void onOpen(WebSocket webSocket);
     }
 }
