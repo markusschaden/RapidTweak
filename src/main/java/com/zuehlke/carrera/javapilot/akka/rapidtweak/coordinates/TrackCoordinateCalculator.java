@@ -14,6 +14,8 @@ public class TrackCoordinateCalculator {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TrackCoordinateCalculator.class);
 
+    private static boolean simulation = false;
+
     private QuaternionCalculator quaternionCalculator;
     private int index = 0;
     private static double[][] values = {
@@ -24,9 +26,10 @@ public class TrackCoordinateCalculator {
     };
 
     static {
-        values = new ReadCSV().getData();
-        LOGGER.info("CSV Load complete");
-
+        if (simulation) {
+            values = new ReadCSV().getData();
+            LOGGER.info("CSV Load complete");
+        }
     }
 
     public TrackCoordinateCalculator() {
@@ -35,17 +38,25 @@ public class TrackCoordinateCalculator {
     }
 
     public void onSensorEvent(SensorEvent sensorEvent) {
-        SensorEvent sensorEvent1 = new SensorEvent("test", new int[]{(int) values[index][0], (int) values[index][1], (int) values[index][2]}, new int[]{(int) values[index][3], (int) values[index][4], (int) values[index][5]}, new int[]{(int) values[index][6], (int) values[index][7], (int) values[index][8]}, new Date().getTime());
-        index++;
+        if (simulation) {
+            SensorEvent sensorEvent1 = new SensorEvent("test", new int[]{(int) values[index][0], (int) values[index][1], (int) values[index][2]}, new int[]{(int) values[index][3], (int) values[index][4], (int) values[index][5]}, new int[]{(int) values[index][6], (int) values[index][7], (int) values[index][8]}, new Date().getTime());
+            index++;
 
-        quaternionCalculator.updateTrack(sensorEvent1);
+            quaternionCalculator.updateTrack(sensorEvent1);
+        } else {
+            quaternionCalculator.updateTrack(sensorEvent);
+        }
     }
 
     public Double[] calculatePosition(SensorEvent sensorEvent) {
-        SensorEvent sensorEvent1 = new SensorEvent("test", new int[]{(int) values[index][0], (int) values[index][1], (int) values[index][2]}, new int[]{(int) values[index][3], (int) values[index][4], (int) values[index][5]}, new int[]{(int) values[index][6], (int) values[index][7], (int) values[index][8]}, new Date().getTime());
-        index++;
+        if (simulation) {
+            SensorEvent sensorEvent1 = new SensorEvent("test", new int[]{(int) values[index][0], (int) values[index][1], (int) values[index][2]}, new int[]{(int) values[index][3], (int) values[index][4], (int) values[index][5]}, new int[]{(int) values[index][6], (int) values[index][7], (int) values[index][8]}, new Date().getTime());
+            index++;
 
-        return quaternionCalculator.calculatePosition(sensorEvent1);
+            return quaternionCalculator.calculatePosition(sensorEvent1);
+        } else {
+            return quaternionCalculator.calculatePosition(sensorEvent);
+        }
     }
 
     public List<Double[]> getTrack() {

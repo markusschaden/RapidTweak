@@ -17,8 +17,6 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-
 /**
  * Created by Markus on 25.09.2015.
  */
@@ -36,6 +34,7 @@ public class TrackModeler implements PowerNotifier {
     private long timeRoundBegin;
     private ModelerStatus modelerStatus = ModelerStatus.UNDEFINED;
     private TrackCoordinateCalculator trackCoordinateCalculator;
+    private int speedElementIndex = 0;
 
     public TrackModeler(Race race, TrackCoordinateCalculator trackCoordinateCalculator) {
         this.race = race;
@@ -149,7 +148,7 @@ public class TrackModeler implements PowerNotifier {
                 long end = velocityMessage.getTimeStamp();
 
                 String sourceId = "";
-                try {
+                /*try {
                     Field field = velocityMessage.getClass().getDeclaredField("sourceId");
                     field.setAccessible(true);
                     sourceId = (String) field.get(velocityMessage);
@@ -157,7 +156,10 @@ public class TrackModeler implements PowerNotifier {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                }
+                }*/
+
+                sourceId = "" + speedElementIndex;
+                speedElementIndex++;
 
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
                 speedMeasureTrackElement.getSpeeds().add(velocityMessage.getVelocity());

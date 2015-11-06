@@ -19,7 +19,6 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +42,7 @@ public class TrackOptimizer implements PowerNotifier {
     private int velocityCounter = 0;
     private TrackCoordinateCalculator trackCoordinateCalculator;
     private PositionUpdateThread positionUpdateThread;
+    private SpeedMeasureTrackElement currentSpeedMeasureElement;
 
     public TrackOptimizer(Race race) {
         this.race = race;
@@ -151,7 +151,8 @@ public class TrackOptimizer implements PowerNotifier {
             optimizer.onPenalityEvent(message);
         }
 
-        SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(message.getBarrier());
+        //SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(message.getBarrier());
+        SpeedMeasureTrackElement element = currentSpeedMeasureElement;
         element.setSpeedLimit(message.getSpeedLimit());
 
         com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage penaltyMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage(message.getBarrier());
@@ -162,7 +163,7 @@ public class TrackOptimizer implements PowerNotifier {
     public void onVelocityMessage(VelocityMessage message) {
 
         String sourceId = "";
-        try {
+        /*try {
             Field field = message.getClass().getDeclaredField("sourceId");
             field.setAccessible(true);
             sourceId = (String) field.get(message);
@@ -170,7 +171,11 @@ public class TrackOptimizer implements PowerNotifier {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        int sizeSpeedMeasure = race.getSpeedMeasureTrackElements().size();
+        sourceId = "" + velocityCounter;
+        velocityCounter = (velocityCounter + 1) % sizeSpeedMeasure;
 
         long end = message.getTimeStamp();
         SpeedMeasureTrackElement element = race.getSpeedMeasureTrackElements().get(sourceId);
@@ -180,7 +185,8 @@ public class TrackOptimizer implements PowerNotifier {
         element.getPositions().put(power, end - timeRoundBegin);
         element.setLastSpeed(message.getVelocity());
 
-        velocityCounter++;
+        currentSpeedMeasureElement = element;
+        //velocityCounter++;
 
         LOGGER.info("Updated SpeedMeasureTrackElement: " + element.toString());
 
