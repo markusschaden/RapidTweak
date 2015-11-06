@@ -4,7 +4,11 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import com.zuehlke.carrera.javapilot.akka.PowerAction;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StartMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.routing.RoutingService;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.*;
 import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +54,19 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
             routingService.onRoundTimeMessage((RoundTimeMessage)message);
         } else if (message instanceof RaceStopMessage) {
             routingService.onRaceStop((RaceStopMessage) message);
+
+            ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StopMessage());
+
+
         } else if (message instanceof RaceStartMessage){
+
+            ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StartMessage());
+            Element.resetIdCounter();
+            StraightTrackElement.resetCounter();
+            RightCurveTrackElement.resetCounter();
+            LeftCurveTrackElement.resetCounter();
+            SpeedMeasureTrackElement.resetCounter();
+
             pilot.tell(new PowerAction(START_VELOCITY), getSelf());
             routingService.onRaceStart((RaceStartMessage) message);
         } else {

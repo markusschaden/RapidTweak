@@ -52,16 +52,16 @@ public class ExperimentCurveOptimizer implements Optimizer {
                     accelerationTime = (int) (experimentEntry.getAcceleartionTime() - 100);
                 } else {
                     int adder = 40;
-                    long newPower;
+                    long newAccelerationTime;
                     do {
                         adder -= 10;
-                        newPower = experimentEntry.getAcceleartionTime() + adder;
+                        newAccelerationTime = experimentEntry.getAcceleartionTime() + adder;
 
 
-                    } while (!checkSpeed(list, newPower) && adder > 0);
+                    } while (!checkSpeed(list, newAccelerationTime) && adder > 0);
 
 
-                    accelerationTime = (int) (experimentEntry.getAcceleartionTime() + 30);
+                    accelerationTime = (int) newAccelerationTime;//(int) (experimentEntry.getAcceleartionTime() + 30);
                 }
             }
             list.add(new ExperimentEntry(accelerationTime, duration));
@@ -79,9 +79,9 @@ public class ExperimentCurveOptimizer implements Optimizer {
 
     }
 
-    private boolean checkSpeed(List<ExperimentEntry> list, long newPower) {
+    private boolean checkSpeed(List<ExperimentEntry> list, long newAccelerationTime) {
         for (ExperimentEntry ee : list) {
-            if (ee.getAcceleartionTime() <= newPower && ee.isPenaltyOccured()) {
+            if (ee.getAcceleartionTime() <= newAccelerationTime && ee.isPenaltyOccured()) {
                 return false;
             }
         }
