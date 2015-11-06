@@ -20,8 +20,8 @@ public class ExperimentOptimizer implements Optimizer {
     private Race race;
     private final Logger LOGGER = LoggerFactory.getLogger(ExperimentOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = 255;
-    private final int MIN_POWER = 130;
+    private final int MAX_POWER = 160;
+    private final int MIN_POWER = 100;
 
     public ExperimentOptimizer(Race race) {
         this.race = race;

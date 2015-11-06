@@ -1,11 +1,12 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.LeftCurveTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.RightCurveTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
-import lombok.Data;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +14,11 @@ import java.util.List;
 
 public class HeuristicElements {
 
-    private HeuristicElement straight = new HeuristicElement(-500,500, StraightTrackElement.class);
-    private HeuristicElement rightCurve = new HeuristicElement(1000,4000, RightCurveTrackElement.class);
-    private HeuristicElement leftCurve = new HeuristicElement(-4000,-1000, LeftCurveTrackElement.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(HeuristicElements.class);
+
+    private HeuristicElement straight = new HeuristicElement(-749, 749, StraightTrackElement.class);
+    private HeuristicElement rightCurve = new HeuristicElement(750, 10000, RightCurveTrackElement.class);
+    private HeuristicElement leftCurve = new HeuristicElement(-10000, -750, LeftCurveTrackElement.class);
 
     private List<HeuristicElement> heuristicElements = new ArrayList<>(Arrays.asList(new HeuristicElement[]{straight, rightCurve, leftCurve}));
 
@@ -33,7 +36,8 @@ public class HeuristicElements {
             }
         }
 
-        return null;
+        LOGGER.error("Invalid value: " + value);
+        return new StraightTrackElement();
     }
 
 }
