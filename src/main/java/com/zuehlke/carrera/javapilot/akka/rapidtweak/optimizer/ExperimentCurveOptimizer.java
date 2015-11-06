@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.*;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
@@ -18,8 +19,8 @@ public class ExperimentCurveOptimizer implements Optimizer {
     private boolean active = false;
     private final Logger LOGGER = LoggerFactory.getLogger(ExperimentCurveOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = 140;
-    private final int MIN_POWER = 100;
+    private final int MAX_POWER = Configuration.MAX_CURVE;
+    private final int MIN_POWER = Configuration.START_VELOCITY;
 
 
     public ExperimentCurveOptimizer(Race race) {

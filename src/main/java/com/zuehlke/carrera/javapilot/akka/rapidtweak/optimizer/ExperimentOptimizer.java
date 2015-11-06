@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.ExperimentEntry;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
@@ -20,8 +21,8 @@ public class ExperimentOptimizer implements Optimizer {
     private Race race;
     private final Logger LOGGER = LoggerFactory.getLogger(ExperimentOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = 160;
-    private final int MIN_POWER = 100;
+    private final int MAX_POWER = Configuration.MAX_STRAIGHT;
+    private final int MIN_POWER = Configuration.START_VELOCITY;
 
     public ExperimentOptimizer(Race race) {
         this.race = race;
@@ -45,7 +46,7 @@ public class ExperimentOptimizer implements Optimizer {
             int id = trackElement.getId();
             long duration = trackElement.getDurations().get(0).getTime();
 
-            int accelerationTime = (int) (duration / 4);
+            int accelerationTime = (int) (duration / 3);
 
             List<ExperimentEntry> list = race.getStraightExperiment().get(id);
             if (list == null) {
