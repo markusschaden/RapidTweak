@@ -20,7 +20,7 @@ import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RoutingService implements MessageEndpoint, ClientHandler {
+public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRaceStatus {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RoutingService.class);
 
@@ -34,7 +34,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     public RoutingService(ActorRef pilot, UntypedActor actor) {
         race = new Race();
         trackModelerCoordinateCalculator = new TrackCoordinateCalculator();
-        trackModeler = new TrackModeler(race, trackModelerCoordinateCalculator);
+        trackModeler = new TrackModeler(race, trackModelerCoordinateCalculator, this);
         trackModeler.setPower(100);
         trackOptimizer = new TrackOptimizer(race);
         raceDatabase = new RaceDatabase();
@@ -102,15 +102,15 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
                 break;
 
             case LEARN:
-                trackModeler.onRoundTimeMessage(message);
+                /*trackModeler.onRoundTimeMessage(message);
                 raceStatus = RaceStatus.RACE;
                 LOGGER.info("onRoundTimeMessage | RaceStatus: " + raceStatus);
-                trackOptimizer.optimize(message);
+                trackOptimizer.optimize(message);*/
 
                 break;
 
             case RACE:
-                trackOptimizer.onRoundTimeMessage(message);
+                //trackOptimizer.onRoundTimeMessage(message);
 
                 break;
         }
@@ -150,6 +150,14 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
         if (raceStatus == RaceStatus.RACE) {
             RaceDrawerMessage raceDrawerMessage = new RaceDrawerMessage(trackModelerCoordinateCalculator.getTrack());
             ServiceManager.getInstance().getMessageDispatcher().sendSingleMessage(webSocket, raceDrawerMessage);
+        }
+    }
+
+    @Override
+    public void changeRaceStatus(RaceStatus raceStatus) {
+        this.raceStatus = raceStatus;
+        if (raceStatus == RaceStatus.RACE) {
+            trackOptimizer.optimize();
         }
     }
 }

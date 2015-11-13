@@ -1,9 +1,12 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerNotifier;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.routing.ChangeRaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Duration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
@@ -30,64 +33,84 @@ public class TrackModeler implements PowerNotifier {
     private Race race;
     private HeuristicElements heuristicElements;
     private long startTrackElement;
-    private int power;
+    private int power = Configuration.START_VELOCITY;
     private long timeRoundBegin;
     private ModelerStatus modelerStatus = ModelerStatus.UNDEFINED;
     private TrackCoordinateCalculator trackCoordinateCalculator;
     private int speedElementIndex = 0;
+    private RoundDetection roundDetection = new RoundDetection();
+    private boolean first = true;
+    private ChangeRaceStatus changeRaceStatus;
 
-    public TrackModeler(Race race, TrackCoordinateCalculator trackCoordinateCalculator) {
+    public TrackModeler(Race race, TrackCoordinateCalculator trackCoordinateCalculator, ChangeRaceStatus changeRaceStatus) {
         this.race = race;
         heuristicElements = new HeuristicElements();
         this.trackCoordinateCalculator = trackCoordinateCalculator;
+        this.changeRaceStatus = changeRaceStatus;
     }
 
     public void onSensorEvent(SensorEvent sensorEvent) {
-        if (modelerStatus == ModelerStatus.RUNNING) {
+
+        if (modelerStatus == ModelerStatus.ROUNDDETECTION) {
+
+
+            //case RUNNING:
             trackCoordinateCalculator.onSensorEvent(sensorEvent);
-        }
-
-        if (currentTrackElement == null) {
-            currentTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
-            startTrackElement = sensorEvent.getTimeStamp();
-            currentTrackElement.getPositions().put(power, 0L);
-        }
-
-        TrackElement newTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
-
-        if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
 
 
-            long end = sensorEvent.getTimeStamp();
-            newTrackElement.getPositions().put(power, end - timeRoundBegin);
-            currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
-            currentTrackElement.setLatestDuration(end - startTrackElement);
-            currentTrackElement.updateTrackElementName();
-            currentTrackElement.setId();
-            race.getTrack().add(currentTrackElement);
+            if (currentTrackElement == null) {
+                currentTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
+                startTrackElement = sensorEvent.getTimeStamp();
+                currentTrackElement.getPositions().put(power, 0L);
+            }
 
-            LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
+            TrackElement newTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
 
-            MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
-            ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+            if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
 
-            currentTrackElement = newTrackElement;
 
-            startTrackElement = end;
+                long end = sensorEvent.getTimeStamp();
+                newTrackElement.getPositions().put(power, end - timeRoundBegin);
+                currentTrackElement.getDurations().add(new Duration(power, end - startTrackElement));
+                currentTrackElement.setLatestDuration(end - startTrackElement);
+                currentTrackElement.updateTrackElementName();
+                currentTrackElement.setId();
+                if (end - startTrackElement > 200) {
+                    //ignore the first track element after round detection phase has started
+                    if (first) {
+                        first = false;
+                    } else {
+                        race.getTrack().add(currentTrackElement);
+                        //LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
+                        MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
+                        ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
+
+                        if (roundDetection.isRound(race)) {
+                            modelerStatus = ModelerStatus.STOPPED;
+                            roundDetection.createRoundTrack(race);
+                            changeRaceStatus.changeRaceStatus(RaceStatus.RACE);
+                        }
+                    }
+                    startTrackElement = end;
+                } else {
+                    //LOGGER.info("Ignored Element" + currentTrackElement.toString());
+                }
+                currentTrackElement = newTrackElement;
+
+
+            }
+
         }
     }
 
 
     public void onRoundTimeMessage(RoundTimeMessage roundTimeMessage) {
+        if (true)
+            return;
+
         timeRoundBegin = roundTimeMessage.getTimestamp();
 
         switch (modelerStatus) {
-
-            case UNDEFINED:
-                modelerStatus = ModelerStatus.RUNNING;
-                LOGGER.info("Starting TrackModeler | modelerStatus: " + modelerStatus);
-                break;
-
 
             case RUNNING:
                 //Add Last track element
@@ -143,22 +166,25 @@ public class TrackModeler implements PowerNotifier {
 
         switch (modelerStatus) {
 
-            case RUNNING:
+            case UNDEFINED:
+                modelerStatus = ModelerStatus.SPEEDUP;
+                LOGGER.info("Starting TrackModeler | modelerStatus: " + modelerStatus);
+
+                checkLearningSpeed(velocityMessage);
+
+                break;
+
+
+            case SPEEDUP:
+                checkLearningSpeed(velocityMessage);
+
+                break;
+
+            case ROUNDDETECTION:
 
                 long end = velocityMessage.getTimeStamp();
 
-                String sourceId = "";
-                /*try {
-                    Field field = velocityMessage.getClass().getDeclaredField("sourceId");
-                    field.setAccessible(true);
-                    sourceId = (String) field.get(velocityMessage);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }*/
-
-                sourceId = "" + speedElementIndex;
+                String sourceId = "" + speedElementIndex;
                 speedElementIndex++;
 
                 SpeedMeasureTrackElement speedMeasureTrackElement = new SpeedMeasureTrackElement();
@@ -179,6 +205,20 @@ public class TrackModeler implements PowerNotifier {
         }
 
 
+    }
+
+    private void checkLearningSpeed(VelocityMessage velocityMessage) {
+        if (velocityMessage != null) {
+            if (velocityMessage.getVelocity() < 200) {
+                power += 10;
+                LOGGER.info("Speed to low, set power to " + power);
+                ServiceManager.getInstance().getPowerService().setPower(power);
+
+            } else {
+                modelerStatus = ModelerStatus.ROUNDDETECTION;
+                LOGGER.info("TrackModeler | modelerStatus: " + modelerStatus);
+            }
+        }
     }
 
 

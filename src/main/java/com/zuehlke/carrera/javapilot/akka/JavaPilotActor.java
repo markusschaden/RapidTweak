@@ -5,10 +5,8 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 import com.zuehlke.carrera.javapilot.akka.experimental.ThresholdConfiguration;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StartMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.*;
 import com.zuehlke.carrera.javapilot.config.PilotProperties;
 import com.zuehlke.carrera.javapilot.services.EndpointAnnouncement;
 import com.zuehlke.carrera.javapilot.services.PilotToRelayConnection;
@@ -72,7 +70,7 @@ public class JavaPilotActor extends UntypedActor {
         try {
 
             if (message instanceof RaceStartMessage) {
-                ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StartMessage());
+                /*ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StartMessage());
                 Element.resetIdCounter();
                 StraightTrackElement.resetCounter();
                 RightCurveTrackElement.resetCounter();
@@ -80,7 +78,11 @@ public class JavaPilotActor extends UntypedActor {
                 SpeedMeasureTrackElement.resetCounter();
 
                 handleRaceStart((RaceStartMessage) message);
-                ServiceManager.getInstance().getPowerService().setPower((Configuration.START_VELOCITY));
+                ServiceManager.getInstance().getPowerService().setPower((Configuration.START_VELOCITY));*/
+
+                createTopology();
+                long now = System.currentTimeMillis();
+                LOGGER.info("received race start");
 
                 sensorEntryPoint.forward(message, getContext());
 

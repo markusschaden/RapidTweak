@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -73,6 +74,17 @@ public class TrackOptimizer implements PowerNotifier {
         velocityCounter = 0;
     }
 
+    public void optimize() {
+        currentTrackElement = race.getTrack().get(segementCounter);
+        startTrackElement = new Date().getTime();
+        timeRoundBegin = new Date().getTime();
+        velocityCounter = 0;
+    }
+
+
+
+
+
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
         timeRoundBegin = message.getTimestamp();
@@ -114,7 +126,6 @@ public class TrackOptimizer implements PowerNotifier {
 
 
                 TrackElement nextTrackElement = null;
-                //Get the next matching track element from the race track
                 do {
                     segementCounter++;
                     nextTrackElement = race.getTrack().get(segementCounter);

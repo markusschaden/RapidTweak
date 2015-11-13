@@ -73,7 +73,7 @@ public class MessageDispatcher implements AndroidAppWebSocketServer.MessageHandl
 
     public void sendMessage(Message message) {
         if (androidAppWebSocketServer != null) {
-            LOGGER.info("Send Message: " + message.toString());
+            //LOGGER.info("Send Message: " + message.toString());
             Thread sendMessageThread = new Thread(() -> {
                 String json = serializator.serialize(message);
                 String className = message.getClass().getCanonicalName();
