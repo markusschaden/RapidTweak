@@ -10,6 +10,7 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.Monitoring
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.dal.RaceDatabase;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
@@ -30,8 +31,11 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
     TrackOptimizer trackOptimizer;
     RaceDatabase raceDatabase;
     TrackCoordinateCalculator trackModelerCoordinateCalculator;
+    EmergencyWatchdog emergencyWatchdog;
 
     public RoutingService(ActorRef pilot, UntypedActor actor) {
+        emergencyWatchdog = new EmergencyWatchdog();
+
         race = new Race();
         trackModelerCoordinateCalculator = new TrackCoordinateCalculator();
         trackModeler = new TrackModeler(race, trackModelerCoordinateCalculator, this);
@@ -75,6 +79,8 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
     }
 
     public void onSensorEvent(SensorEvent event) {
+        emergencyWatchdog.onSensorEvent(event);
+
         switch (raceStatus) {
 
             case LEARN:
@@ -97,20 +103,20 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
 
                 trackModeler.onRoundTimeMessage(message);
                 raceStatus = RaceStatus.LEARN;
-                LOGGER.info("onRoundTimeMessage | RaceStatus: " + raceStatus);
+                LOGGER.info("appOnlyOnRoundTimeMessage | RaceStatus: " + raceStatus);
 
                 break;
 
             case LEARN:
-                /*trackModeler.onRoundTimeMessage(message);
+                /*trackModeler.appOnlyOnRoundTimeMessage(message);
                 raceStatus = RaceStatus.RACE;
-                LOGGER.info("onRoundTimeMessage | RaceStatus: " + raceStatus);
+                LOGGER.info("appOnlyOnRoundTimeMessage | RaceStatus: " + raceStatus);
                 trackOptimizer.optimize(message);*/
 
                 break;
 
             case RACE:
-                //trackOptimizer.onRoundTimeMessage(message);
+                trackOptimizer.appOnlyOnRoundTimeMessage(message);
 
                 break;
         }

@@ -47,15 +47,9 @@ public class TrackOptimizer implements PowerNotifier {
 
     public TrackOptimizer(Race race) {
         this.race = race;
-        StraightOptimizer straightOptimizer = new StraightOptimizer(race);
-        HalfCurveOptimizer halfCurveOptimizer = new HalfCurveOptimizer(race);
         ExperimentOptimizer experimentOptimizer = new ExperimentOptimizer(race);
         ExperimentCurveOptimizer curveExperimentOptimizer = new ExperimentCurveOptimizer(race);
-        straightOptimizer.setActive(true);
         heuristicElements = new HeuristicElements();
-
-        //optimizers.add(straightOptimizer);
-        //optimizers.add(halfCurveOptimizer);
         optimizers.add(experimentOptimizer);
         optimizers.add(curveExperimentOptimizer);
 
@@ -82,11 +76,7 @@ public class TrackOptimizer implements PowerNotifier {
     }
 
 
-
-
-
-
-    public void onRoundTimeMessage(RoundTimeMessage message) {
+    public void appOnlyOnRoundTimeMessage(RoundTimeMessage message) {
         timeRoundBegin = message.getTimestamp();
 
         com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage roundTimeMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RoundTimeMessage();
