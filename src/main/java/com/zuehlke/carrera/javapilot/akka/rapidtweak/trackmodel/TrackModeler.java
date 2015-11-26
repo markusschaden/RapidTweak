@@ -75,12 +75,13 @@ public class TrackModeler implements PowerNotifier {
                 currentTrackElement.setLatestDuration(end - startTrackElement);
                 currentTrackElement.updateTrackElementName();
                 currentTrackElement.setId();
+                race.getTrack().add(currentTrackElement);
                 if (end - startTrackElement > 200) {
                     //ignore the first track element after round detection phase has started
                     if (first) {
                         first = false;
                     } else {
-                        race.getTrack().add(currentTrackElement);
+                        race.getSpecialisedTrack().add(currentTrackElement);
                         //LOGGER.info("Added TrackElement: " + currentTrackElement.toString());
                         MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
                         ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);

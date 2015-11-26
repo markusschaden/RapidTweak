@@ -82,7 +82,7 @@ public class ExperimentOptimizer implements Optimizer {
     private boolean checkSpeed(List<ExperimentEntry> list, long newAccelerationTime) {
         for (ExperimentEntry ee : list) {
             if (ee.getAcceleartionTime() <= newAccelerationTime && ee.isPenaltyOccured()) {
-                return false;
+                //return false;
             }
         }
         return true;

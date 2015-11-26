@@ -19,6 +19,7 @@ public class Race implements Serializable {
     private String trackId;
     private long time = new Date().getTime();
     private List<TrackElement> track = new CircularArrayList<>();
+    private List<TrackElement> specialisedTrack = new CircularArrayList<>();
     private Map<String, SpeedMeasureTrackElement> speedMeasureTrackElements = new HashMap<>();
     //private List<TrackElement> speedMeasureTrackElements = new CircularArrayList<>();
     private HashMap<Integer, List<ExperimentEntry>> straightExperiment = new HashMap<>();

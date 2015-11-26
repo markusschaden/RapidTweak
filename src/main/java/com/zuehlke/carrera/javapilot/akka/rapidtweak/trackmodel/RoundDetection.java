@@ -18,12 +18,12 @@ public class RoundDetection {
 
 
     public boolean isRound(Race race) {
-        if (race == null || race.getTrack() == null) return false;
-        int size = race.getTrack().size();
+        if (race == null || race.getSpecialisedTrack() == null) return false;
+        int size = race.getSpecialisedTrack().size();
         if (size % 2 == 1 || size < 4) return false;
 
-        List<TrackElement> round1 = race.getTrack().subList(0, size / 2);
-        List<TrackElement> round2 = race.getTrack().subList(size / 2, size);
+        List<TrackElement> round1 = race.getSpecialisedTrack().subList(0, size / 2);
+        List<TrackElement> round2 = race.getSpecialisedTrack().subList(size / 2, size);
 
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
