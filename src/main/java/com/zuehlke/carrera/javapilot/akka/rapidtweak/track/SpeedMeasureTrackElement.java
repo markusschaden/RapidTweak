@@ -1,7 +1,5 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.track;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import lombok.Data;
 import lombok.ToString;
 
@@ -20,7 +18,7 @@ public class SpeedMeasureTrackElement extends Element {
     private static int elementCounter = 1;
     private double speedLimit;
     private double lastSpeed;
-    private String sourceId;
+    //private String sourceId;
 
     public void updateTrackElementName() {
         elementName = ELEMENT_NAME + elementCounter++;

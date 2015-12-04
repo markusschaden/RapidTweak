@@ -3,11 +3,14 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel;
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.CircularArrayList;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Markus on 12.11.2015.
@@ -18,12 +21,12 @@ public class RoundDetection {
 
 
     public boolean isRound(Race race) {
-        if (race == null || race.getSpecialisedTrack() == null) return false;
-        int size = race.getSpecialisedTrack().size();
+        if (race == null || race.getFilteredTrack() == null) return false;
+        int size = race.getFilteredTrack().size();
         if (size % 2 == 1 || size < 4) return false;
 
-        List<TrackElement> round1 = race.getSpecialisedTrack().subList(0, size / 2);
-        List<TrackElement> round2 = race.getSpecialisedTrack().subList(size / 2, size);
+        List<TrackElement> round1 = race.getFilteredTrack().subList(0, size / 2);
+        List<TrackElement> round2 = race.getFilteredTrack().subList(size / 2, size);
 
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
@@ -51,10 +54,10 @@ public class RoundDetection {
         //LOGGER.info("Round2: " + sb2.toString());
 
 
-        LOGGER.error("Round matched " + Math.abs(time1 - time2));
+        LOGGER.error("Round matched, diff " + Math.abs(time1 - time2) + "ms");
 
         if (Math.abs(time1 - time2) < Configuration.DELTA) {
-            LOGGER.error("Round matched");
+            LOGGER.error("Round matched within delta");
             return true;
         }
 
@@ -68,6 +71,15 @@ public class RoundDetection {
             trackElements.add(race.getTrack().get(i));
         }
         race.setTrack(trackElements);
+
+        size = race.getSpeedMeasureTrackElements().size();
+        LOGGER.info("SpeedMeasureTrackElements before: " + race.getSpeedMeasureTrackElements().size());
+        Map<String, SpeedMeasureTrackElement> m = new HashMap<>();
+        for (int i = 0; i < size / 2; i++) {
+            m.put("" + i, race.getSpeedMeasureTrackElements().get("" + i));
+        }
+        race.setSpeedMeasureTrackElements(m);
+        LOGGER.info("SpeedMeasureTrackElements after: " + race.getSpeedMeasureTrackElements().size());
     }
 
 }

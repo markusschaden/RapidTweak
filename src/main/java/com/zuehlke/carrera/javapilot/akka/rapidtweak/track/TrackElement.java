@@ -18,7 +18,13 @@ public abstract class TrackElement extends Element {
     protected List<Integer> speeds = new ArrayList<>();
     protected boolean penaltyOccured;
     protected long latestDuration;
-    private long begin;
+    //private long begin;
+    private long startTimestamp;
+
+    public void calculateDuration(long endTimestamp) {
+        latestDuration = endTimestamp - startTimestamp;
+        durations.add(new Duration(100, latestDuration));
+    }
 
     public long getBestTime() {
         long time = 999999;

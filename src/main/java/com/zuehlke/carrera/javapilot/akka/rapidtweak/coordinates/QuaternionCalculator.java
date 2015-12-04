@@ -46,7 +46,7 @@ public class QuaternionCalculator {
         /*The initial round*/
         if (quat == null) {
             //Set the initial orientation according to first sample of accelerometry
-            System.out.println("X " + Double.toString(imuData[0]) + " Y " + Double.toString(imuData[1]) + " Z " + Double.toString(imuData[2]));
+            //System.out.println("X " + Double.toString(imuData[0]) + " Y " + Double.toString(imuData[1]) + " Z " + Double.toString(imuData[2]));
             initTheta = Math.acos(dot(normalize(new double[]{imuData[0], imuData[1], imuData[2]}), Z));
             rotAxis = cross(new double[]{imuData[0], imuData[1], imuData[2]}, Z);
             //System.out.println("X "+Double.toString(rotAxis[0]) +" Y "+Double.toString(rotAxis[1])+" Z "+Double.toString(rotAxis[2])+" norm "+Double.toString(norm(rotAxis))+" cos "+Double.toString(Math.cos(initTheta/2d))+" "+Double.toString(initTheta));
@@ -59,7 +59,7 @@ public class QuaternionCalculator {
             }
             madgwickAHRS.setOrientationQuaternion(quat.getDouble());
             //System.out.println(Double.toString(initTheta) +" "+Double.toString(Math.cos(initTheta/2d))+" "+Double.toString(-Math.sin(initTheta/2d)*rotAxis[0])+" "+Double.toString(-Math.sin(initTheta/2d)*rotAxis[1])+" "+Double.toString(-Math.sin(initTheta/2d)*rotAxis[2]) );
-            System.out.println(quat.toString());
+            //System.out.println(quat.toString());
         } else {
             /*Use Madgwick AHRS IMU algorithm*/
             madgwickAHRS.AHRSUpdate(new double[]{imuData[3], imuData[4], imuData[5], imuData[0], imuData[1], imuData[2], imuData[6], imuData[7], imuData[8]});

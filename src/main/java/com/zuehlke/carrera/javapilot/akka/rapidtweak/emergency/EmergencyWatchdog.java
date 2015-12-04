@@ -27,10 +27,42 @@ public class EmergencyWatchdog {
         watchdog.start();
     }
 
+    public void cancel() {
+        watchdog.canceled = true;
+    }
+
 
     private void fallout() {
 
         LOGGER.error("Fallout");
+
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMmMMMMMMMMMMMMMMMMMMMMmMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMms:-+NMMMMMMMMMMMMMMMMN+-:smMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMm+-----/NMMMMMMMMMMMMMMN/-----omMMMMMMMMM");
+        System.out.println("MMMMMMMMy--------:mMMMMMMMMMMMMm:--------yMMMMMMMM");
+        System.out.println("MMMMMMM+-----------dMMMMMMMMMMd-----------+MMMMMMM");
+        System.out.println("MMMMMM+-------------yMMMMMMMMy-------------+MMMMMM");
+        System.out.println("MMMMMy---------------yMMMMMMs---------------yMMMMM");
+        System.out.println("MMMMM---------------yMNhsshNMy---------------MMMMM");
+        System.out.println("MMMMd--------------dMs------sMd--------------dMMMM");
+        System.out.println("MMMMmsssssssssssssyMM--------MMysssssssssssssmMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMs------sMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMNhsshNMMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMy+syys+yMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMo--------oMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMN+----------+NMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMN/------------/NMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMm:--------------:mMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMd------------------dMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMs/----------------/sMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMmhyso++++osyhmMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+        System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+
+
         LOGGER.error("Reseting race");
         ServiceManager.getInstance().getPowerService().setPower(100);
     }

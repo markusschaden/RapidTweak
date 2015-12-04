@@ -45,7 +45,7 @@ public class PowerExecutor {
 
             ServiceManager.getInstance().getPowerService().setPower(power);
             try {
-                LOGGER.info("Waiting for " + duration + "ms");
+                //LOGGER.info("Waiting for " + duration + "ms");
                 Thread.sleep(duration);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -77,7 +77,7 @@ public class PowerExecutor {
         public void run() {
 
             try {
-                LOGGER.info("Waiting for " + waitTime + "ms");
+                //LOGGER.info("Waiting for " + waitTime + "ms");
                 Thread.sleep(waitTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();

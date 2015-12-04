@@ -38,7 +38,7 @@ public class PowerService {
     }
 
     public void setPower(int power) {
-        LOGGER.info("Set Power to: " + power);
+        //LOGGER.info("Set Power to: " + power);
         for (PowerNotifier powerNotifier : powerNotifierList) {
             powerNotifier.onNewPower(power);
         }
@@ -48,5 +48,9 @@ public class PowerService {
 
     public void addPowerNotifier(PowerNotifier powerNotifier) {
         this.powerNotifierList.add(powerNotifier);
+    }
+
+    public void reset() {
+        this.powerNotifierList.clear();
     }
 }

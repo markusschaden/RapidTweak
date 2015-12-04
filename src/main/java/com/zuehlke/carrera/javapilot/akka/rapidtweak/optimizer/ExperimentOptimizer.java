@@ -74,6 +74,9 @@ public class ExperimentOptimizer implements Optimizer {
             race.getStraightExperiment().put(id, list);
 
             PowerExecutor powerExecutor = new PowerExecutor();
+
+            LOGGER.info("Recognized TrackElement: " + trackElement.getElementName() + " length in time: " + trackElement.getDurations().get(0).getTime() + ", acc: " + accelerationTime);
+
             powerExecutor.setPowerFor(MAX_POWER, accelerationTime, MIN_POWER);
         }
     }

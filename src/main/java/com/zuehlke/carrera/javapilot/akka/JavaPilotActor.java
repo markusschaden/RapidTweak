@@ -138,7 +138,7 @@ public class JavaPilotActor extends UntypedActor {
     }
 
     private void handleRoundTime(RoundTimeMessage message) {
-        LOGGER.info ( "Round Time in ms: " + message.getRoundDuration());
+        //LOGGER.info ( "Round Time in ms: " + message.getRoundDuration());
         roundTimeEntryPoint.forward(message, getContext());
     }
 

@@ -11,24 +11,23 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawer
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.dal.RaceDatabase;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.TrackOptimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.Context;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.StateHandler;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.TrackModeler;
 import com.zuehlke.carrera.relayapi.messages.*;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRaceStatus {
+public class RoutingService implements MessageEndpoint, ClientHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RoutingService.class);
 
     RaceStatus raceStatus = RaceStatus.UNDEFINED;
     Race race;
-    TrackModeler trackModeler;
-    TrackOptimizer trackOptimizer;
+    StateHandler stateHandler;
     RaceDatabase raceDatabase;
     TrackCoordinateCalculator trackModelerCoordinateCalculator;
     EmergencyWatchdog emergencyWatchdog;
@@ -36,90 +35,51 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
     public RoutingService(ActorRef pilot, UntypedActor actor) {
         emergencyWatchdog = new EmergencyWatchdog();
 
+        ServiceManager.getInstance().getPowerService().init(pilot, actor);
+        init();
+    }
+
+
+    private void init() {
+        Context context = new Context();
         race = new Race();
+        context.setRace(race);
+
         trackModelerCoordinateCalculator = new TrackCoordinateCalculator();
-        trackModeler = new TrackModeler(race, trackModelerCoordinateCalculator, this);
-        trackModeler.setPower(100);
-        trackOptimizer = new TrackOptimizer(race);
+        stateHandler = new StateHandler(context);
+        //trackModeler.setPower(100);
+        //trackOptimizer = new TrackOptimizer(race);
         raceDatabase = new RaceDatabase();
 
-        ServiceManager.getInstance().getPowerService().init(pilot, actor);
-        ServiceManager.getInstance().getPowerService().addPowerNotifier(trackModeler);
-        ServiceManager.getInstance().getPowerService().addPowerNotifier(trackOptimizer);
+        ServiceManager.getInstance().getPowerService().reset();
+        //ServiceManager.getInstance().getPowerService().addPowerNotifier(trackModeler);
+        //ServiceManager.getInstance().getPowerService().addPowerNotifier(trackOptimizer);
 
         ServiceManager.getInstance().getMessageDispatcher().addMessageEndpoint(this);
         ServiceManager.getInstance().getMessageDispatcher().addNewClientHandler(this);
     }
 
+
     public void onPenaltyMessage(PenaltyMessage message) {
 
-        switch(raceStatus) {
-            case RACE:
-                trackOptimizer.onPenalyMessage(message);
-
-                break;
-        }
+        stateHandler.onPenaltyMessage(message);
     }
 
 
     public void onVelocityMessage(VelocityMessage message) {
 
-        switch(raceStatus) {
-
-            case LEARN:
-                trackModeler.onVelocityMessage(message);
-
-                break;
-
-            case RACE:
-                trackOptimizer.onVelocityMessage(message);
-
-                break;
-        }
+        stateHandler.onVelocityMessage(message);
     }
 
     public void onSensorEvent(SensorEvent event) {
         emergencyWatchdog.onSensorEvent(event);
 
-        switch (raceStatus) {
-
-            case LEARN:
-                trackModeler.onSensorEvent(event);
-
-                break;
-
-            case RACE:
-                trackOptimizer.onSensorEvent(event);
-
-                break;
-        }
+        stateHandler.onSensorEvent(event);
     }
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
 
-        switch(raceStatus) {
-
-            case UNDEFINED:
-
-                trackModeler.onRoundTimeMessage(message);
-                raceStatus = RaceStatus.LEARN;
-                LOGGER.info("appOnlyOnRoundTimeMessage | RaceStatus: " + raceStatus);
-
-                break;
-
-            case LEARN:
-                /*trackModeler.appOnlyOnRoundTimeMessage(message);
-                raceStatus = RaceStatus.RACE;
-                LOGGER.info("appOnlyOnRoundTimeMessage | RaceStatus: " + raceStatus);
-                trackOptimizer.optimize(message);*/
-
-                break;
-
-            case RACE:
-                trackOptimizer.appOnlyOnRoundTimeMessage(message);
-
-                break;
-        }
+        stateHandler.onRoundTimeMessage(message);
     }
 
 
@@ -144,6 +104,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
     }
 
     public void onRaceStop(RaceStopMessage message) {
+        emergencyWatchdog.cancel();
         raceDatabase.insertRace(race);
     }
 
@@ -159,11 +120,4 @@ public class RoutingService implements MessageEndpoint, ClientHandler, ChangeRac
         }
     }
 
-    @Override
-    public void changeRaceStatus(RaceStatus raceStatus) {
-        this.raceStatus = raceStatus;
-        if (raceStatus == RaceStatus.RACE) {
-            trackOptimizer.optimize();
-        }
-    }
 }
