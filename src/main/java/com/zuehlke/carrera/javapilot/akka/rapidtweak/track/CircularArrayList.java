@@ -8,6 +8,10 @@ public class CircularArrayList<E> extends ArrayList<E>
 
     public E get(int index)
     {
+        if (index < 0) {
+            index = (index % size()) + size();
+        }
+
         return super.get(index % size());
     }
 }

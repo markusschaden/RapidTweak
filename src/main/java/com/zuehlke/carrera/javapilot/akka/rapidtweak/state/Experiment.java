@@ -71,6 +71,26 @@ public class Experiment implements State {
 
                 currentTrackElement.calculateDuration(sensorEvent.getTimeStamp());
 
+                //regonize the correct current track element
+                long latestDuration = currentTrackElement.getLatestDuration();
+                if (currentTrackElement.getDurations().get(0).getTime() > 500) {
+                    if (Math.abs(currentTrackElement.getLatestDuration() - currentTrackElement.getDurations().get(0).getTime()) > 500) {
+                        LOGGER.warn("Wrong current track element");
+                        int index = segementCounter;
+                        do {
+                            currentTrackElement = context.getRace().getTrack().get(index);
+                            if (index > 0) {
+                                index = -index;
+                            } else {
+                                index = -index;
+                                index++;
+                            }
+                            LOGGER.debug("Check trackelement id: " + index + ": " + currentTrackElement);
+                        } while (Math.abs(latestDuration - currentTrackElement.getDurations().get(0).getTime()) > 500);
+                        LOGGER.info("New current trackelement: " + currentTrackElement);
+                    }
+                }
+
                 MonitoringMessage monitoringMessage = new MonitoringMessage(currentTrackElement);
                 ServiceManager.getInstance().getMessageDispatcher().sendMessage(monitoringMessage);
 

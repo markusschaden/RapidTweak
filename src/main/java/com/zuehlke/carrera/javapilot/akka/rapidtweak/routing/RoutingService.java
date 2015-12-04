@@ -72,7 +72,9 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     }
 
     public void onSensorEvent(SensorEvent event) {
-        emergencyWatchdog.onSensorEvent(event);
+        if (emergencyWatchdog != null) {
+            emergencyWatchdog.onSensorEvent(event);
+        }
 
         stateHandler.onSensorEvent(event);
     }
@@ -104,7 +106,10 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     }
 
     public void onRaceStop(RaceStopMessage message) {
-        emergencyWatchdog.cancel();
+        synchronized (emergencyWatchdog) {
+            emergencyWatchdog.cancel();
+            emergencyWatchdog = null;
+        }
         raceDatabase.insertRace(race);
     }
 
