@@ -25,6 +25,13 @@ public class PowerExecutor {
         ServiceManager.getInstance().getPowerService().setPowerThread(powerThread);
     }
 
+    public void setPowerAfterTimeFor(int power, int duration, int oldPower, long waitTime) {
+
+        PowerThread powerThread = new TemporaryPowerAfterTime(power, duration, oldPower, waitTime);
+
+        ServiceManager.getInstance().getPowerService().setPowerThread(powerThread);
+    }
+
 
 
     class TemporarySpeedThread extends PowerThread {
@@ -84,6 +91,7 @@ public class PowerExecutor {
             }
             ServiceManager.getInstance().getPowerService().setPower(power);
 
+
         }
 
         public void cancel() {
@@ -92,5 +100,46 @@ public class PowerExecutor {
     }
 
 
+    class TemporaryPowerAfterTime extends PowerThread {
+        private boolean canceled = false;
+
+        private long waitTime;
+        private int power;
+        private int duration;
+        private int oldPower;
+
+        public TemporaryPowerAfterTime(int power, int duration, int oldPower, long waitTime) {
+            this.power = power;
+            this.waitTime = waitTime;
+            this.duration = duration;
+            this.oldPower = oldPower;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                //LOGGER.info("Waiting for " + waitTime + "ms");
+                Thread.sleep(waitTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ServiceManager.getInstance().getPowerService().setPower(power);
+
+            try {
+                //LOGGER.info("Waiting for " + duration + "ms");
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!canceled) {
+                ServiceManager.getInstance().getPowerService().setPower(oldPower);
+            }
+        }
+
+        public void cancel() {
+            canceled = true;
+        }
+    }
 
 }

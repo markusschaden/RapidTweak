@@ -69,7 +69,7 @@ public class ExperimentCurveOptimizer implements Optimizer {
             race.getStraightExperiment().put(id, list);
 
             PowerExecutor powerExecutor = new PowerExecutor();
-            powerExecutor.setPowerFor(MAX_POWER, accelerationTime, MIN_POWER);
+            powerExecutor.setPowerAfterTimeFor(MAX_POWER, accelerationTime, MIN_POWER, (long) (trackElement.getAverageDuration() / 3));
         }
         //PowerService.getInstance().setPower(140);
     }

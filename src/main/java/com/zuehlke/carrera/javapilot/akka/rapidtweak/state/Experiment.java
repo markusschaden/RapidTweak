@@ -8,6 +8,7 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.ExperimentOptimiz
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.optimizer.Optimizer;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.SpeedMeasureTrackElement;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.StraightTrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.trackmodel.HeuristicElements;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
@@ -20,9 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Markus on 03.12.2015.
- */
 public class Experiment implements State {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Experiment.class);
@@ -41,6 +39,8 @@ public class Experiment implements State {
 
     StateCallback callback;
     Context context;
+    private boolean penaltyOccured = false;
+    private int penaltyTimeMilliSecond = 0;
 
     public Experiment(Context context, StateCallback callback) {
         this.context = context;
@@ -69,25 +69,45 @@ public class Experiment implements State {
 
             if (newTrackElement != null && !currentTrackElement.getClass().equals(newTrackElement.getClass())) {
 
-                currentTrackElement.calculateDuration(sensorEvent.getTimeStamp());
+                if (penaltyOccured) {
 
-                //regonize the correct current track element
+                    currentTrackElement.calculateDurationWithPenalty(sensorEvent.getTimeStamp(), penaltyTimeMilliSecond);
+                    penaltyTimeMilliSecond = 0;
+                    penaltyOccured = false;
+                } else {
+                    currentTrackElement.calculateDuration(sensorEvent.getTimeStamp());
+                }
+
+                //recognize the correct current track element
                 long latestDuration = currentTrackElement.getLatestDuration();
-                if (currentTrackElement.getDurations().get(0).getTime() > 500) {
-                    if (Math.abs(currentTrackElement.getLatestDuration() - currentTrackElement.getDurations().get(0).getTime()) > 500) {
-                        LOGGER.warn("Wrong current track element");
-                        int index = segementCounter;
-                        do {
-                            currentTrackElement = context.getRace().getTrack().get(index);
-                            if (index > 0) {
-                                index = -index;
-                            } else {
-                                index = -index;
-                                index++;
+                int maxTries = context.getRace().getTrack().size();
+                if (currentTrackElement instanceof StraightTrackElement && currentTrackElement.getDurations().get(0).getTime() > 500 && currentTrackElement.getDurations().size() > 2) {
+                    if (Math.abs(currentTrackElement.getLatestDuration() - currentTrackElement.getDurations().get(currentTrackElement.getDurations().size() - 2).getTime()) > 500) {
+                        if (penaltyOccured) {
+                            penaltyOccured = false;
+                        } else {
+                            LOGGER.warn("Wrong current track element");
+                            int counter = 0;
+                            int index = segementCounter;
+                            do {
+                                currentTrackElement = context.getRace().getTrack().get(index);
+                                if (index > 0) {
+                                    index = -index;
+                                } else {
+                                    index = -index;
+                                    index++;
+                                }
+                                LOGGER.debug("Check trackelement id: " + index + ": " + currentTrackElement);
+
+                                if (counter == maxTries) {
+                                    LOGGER.error("Couldn't match track element, skip");
+                                    break;
+                                }
+                                counter++;
                             }
-                            LOGGER.debug("Check trackelement id: " + index + ": " + currentTrackElement);
-                        } while (Math.abs(latestDuration - currentTrackElement.getDurations().get(0).getTime()) > 500);
-                        LOGGER.info("New current trackelement: " + currentTrackElement);
+                            while (Math.abs(latestDuration - currentTrackElement.getDurations().get(currentTrackElement.getDurations().size() - 2).getTime()) > 500);
+                            LOGGER.info("New current trackelement: " + currentTrackElement);
+                        }
                     }
                 }
 
@@ -165,6 +185,8 @@ public class Experiment implements State {
         com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage penaltyMessage = new com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.PenaltyMessage(message.getBarrier());
         ServiceManager.getInstance().getMessageDispatcher().sendMessage(penaltyMessage);
 
+        penaltyTimeMilliSecond = message.getPenalty_ms();
+        penaltyOccured = true;
     }
 
     @Override

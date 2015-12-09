@@ -50,4 +50,9 @@ public abstract class TrackElement extends Element {
         return result / count;
 
     }
+
+    public void calculateDurationWithPenalty(long endTimestamp, int penaltyTimeMilliSecond) {
+        latestDuration = endTimestamp - startTimestamp - penaltyTimeMilliSecond;
+        durations.add(new Duration(100, latestDuration));
+    }
 }
