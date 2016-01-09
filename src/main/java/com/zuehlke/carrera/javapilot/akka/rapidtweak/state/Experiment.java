@@ -50,7 +50,6 @@ public class Experiment implements State {
         ExperimentCurveOptimizer curveExperimentOptimizer = new ExperimentCurveOptimizer(context.getRace());
         optimizers.add(experimentOptimizer);
         optimizers.add(curveExperimentOptimizer);
-
     }
 
     @Override

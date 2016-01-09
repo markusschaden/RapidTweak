@@ -8,6 +8,7 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.TrackElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ public class RoundDetection {
     public boolean isRound(Race race) {
         if (race == null || race.getFilteredTrack() == null) return false;
         int size = race.getFilteredTrack().size();
-        if (size % 2 == 1 || size < 4) return false;
+        long duration = new Date().getTime() - race.getTime();
+        if (size % 2 == 1 || size < 4 || duration < 4000) return false; //min duration = 4sec
 
         List<TrackElement> round1 = race.getFilteredTrack().subList(0, size / 2);
         List<TrackElement> round2 = race.getFilteredTrack().subList(size / 2, size);

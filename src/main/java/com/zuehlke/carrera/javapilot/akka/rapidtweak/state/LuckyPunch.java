@@ -16,7 +16,6 @@ public class LuckyPunch implements State {
     private final Logger LOGGER = LoggerFactory.getLogger(LuckyPunch.class);
 
     LuckyPunchThread luckyPunchThread;
-    int waittime = 1000 * 10;
 
     StateCallback callback;
 
@@ -44,23 +43,7 @@ public class LuckyPunch implements State {
 
     }
 
-    public void setup() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    LOGGER.info("Setup SpeedUp Algo, wait until start: " + waittime + "ms");
-                    Thread.sleep(waittime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                startLuckyPunch();
-            }
-        }.start();
-    }
-
-    private void startLuckyPunch() {
+    public void start() {
         luckyPunchThread = new LuckyPunchThread();
         luckyPunchThread.start();
     }
@@ -72,12 +55,12 @@ public class LuckyPunch implements State {
         @Override
         public void run() {
 
-            while (speed < 250) {
+            while (true) {
                 LOGGER.info("SpeedUp: " + speed);
                 ServiceManager.getInstance().getPowerService().setPower(speed);
-                speed += 10;
+                speed += 2;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -17,6 +17,8 @@ public class StateHandler implements StateCallback {
 
     private final Logger LOGGER = LoggerFactory.getLogger(StateHandler.class);
 
+    int waittime = 1000 * 60 * 4;
+
     State currentState;
     StateType currentStateType;
     Context context;
@@ -31,6 +33,8 @@ public class StateHandler implements StateCallback {
         states.put(StateType.ROUNDDETECTION, new Rounddetection(context, this));
 
         setState(StateType.SPEEDUP);
+
+        setupLuckyPunch();
     }
 
     @Override
@@ -66,4 +70,27 @@ public class StateHandler implements StateCallback {
         if (currentState != null) currentState.onRoundTimeMessage(message);
     }
 
+
+    private void startLuckyPunch() {
+        setState(StateType.LUCKYPUNCH);
+        if (currentState instanceof LuckyPunch) {
+            ((LuckyPunch) currentState).start();
+        }
+    }
+
+    public void setupLuckyPunch() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    LOGGER.info("Setup SpeedUp Algo, wait until start: " + waittime + "ms");
+                    Thread.sleep(waittime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                LOGGER.info("Start LuckyPunch");
+                startLuckyPunch();
+            }
+        }.start();
+    }
 }
