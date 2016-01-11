@@ -1,5 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
@@ -39,6 +41,8 @@ public class StateHandler implements StateCallback {
 
     @Override
     public void setState(StateType state) {
+        ServiceManager.getInstance().getMessageDispatcher().sendMessage(new StateMessage(state));
+
         if (state == StateType.RESET) {
             LOGGER.warn("Reset");
             synchronized (context) {

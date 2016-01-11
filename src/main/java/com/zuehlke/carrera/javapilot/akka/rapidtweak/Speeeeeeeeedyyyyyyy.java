@@ -9,6 +9,7 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessag
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.routing.RoutingService;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.*;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.visualize.Main;
 import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +28,14 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
 
     private RoutingService routingService;
 
+    private Main main;
+
     public Speeeeeeeeedyyyyyyy(ActorRef pilot) {
         this.pilot = pilot;
         this.power = START_VELOCITY;
         routingService = new RoutingService(pilot, this);
 
-
+        main = new Main();
     }
 
     public static Props props(ActorRef pilot) {
