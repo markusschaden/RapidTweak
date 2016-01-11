@@ -13,7 +13,7 @@ public class EmergencyWatchdog {
 
     private final Logger LOGGER = LoggerFactory.getLogger(EmergencyWatchdog.class);
 
-    private final int TIMEOUT = 200;
+    private final int TIMEOUT = 400;
     private final StateHandler stateHandler;
     private long lastUpdate = 0;
     private int[] sensorValues = new int[5];
@@ -70,10 +70,10 @@ public class EmergencyWatchdog {
         System.out.println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
 
 
-        LOGGER.error("Reseting race");
+        //LOGGER.error("Reseting race");
 
-        watchdog.canceled = true;
-        stateHandler.resetAll();
+        //watchdog.canceled = true;
+        //stateHandler.resetAll();
     }
 
 

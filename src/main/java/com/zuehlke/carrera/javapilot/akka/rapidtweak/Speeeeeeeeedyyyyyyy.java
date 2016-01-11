@@ -49,6 +49,7 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
         } else if (message instanceof PenaltyMessage) {
             routingService.onPenaltyMessage((PenaltyMessage) message);
         } else if (message instanceof RoundTimeMessage) {
+            LOGGER.info("======= " + ((RoundTimeMessage) message).getRoundDuration());
             routingService.onRoundTimeMessage((RoundTimeMessage)message);
         } else if (message instanceof RaceStopMessage) {
             routingService.onRaceStop((RaceStopMessage) message);

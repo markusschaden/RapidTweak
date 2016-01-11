@@ -2,7 +2,6 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.relayapi.messages.*;
@@ -23,7 +22,7 @@ public class StateHandler implements StateCallback {
     Context context;
     HashMap<StateType, State> states = new HashMap<>();
     SetupLuckyPunchThread luckyPunchThread;
-    EmergencyWatchdog emergencyWatchdog;
+    //EmergencyWatchdog emergencyWatchdog;
 
     public StateHandler(Context context) {
         this.context = context;
@@ -64,20 +63,20 @@ public class StateHandler implements StateCallback {
     }
 
     public void onSensorEvent(SensorEvent event) {
-        if (emergencyWatchdog != null) {
+        /*if (emergencyWatchdog != null) {
             emergencyWatchdog.onSensorEvent(event);
-        }
+        }*/
 
         if (currentState != null) currentState.onSensorEvent(event);
     }
 
     public void onRaceStopMessage(RaceStopMessage message) {
-        if (emergencyWatchdog != null) {
+        /*if (emergencyWatchdog != null) {
             synchronized (emergencyWatchdog) {
                 emergencyWatchdog.cancel();
                 emergencyWatchdog = null;
             }
-        }
+        }*/
 
         if (currentState instanceof LuckyPunch) {
             ((LuckyPunch) currentState).stop();
@@ -109,8 +108,8 @@ public class StateHandler implements StateCallback {
     }
 
     public void setupWatchdog() {
-        emergencyWatchdog = new EmergencyWatchdog(this);
-        LOGGER.info("EmergencyWatchdog started");
+        //emergencyWatchdog = new EmergencyWatchdog(this);
+        //LOGGER.info("EmergencyWatchdog started");
     }
 
     public void onRoundTimeMessage(RoundTimeMessage message) {

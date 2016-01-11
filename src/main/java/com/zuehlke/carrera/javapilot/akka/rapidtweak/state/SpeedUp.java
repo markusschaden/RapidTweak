@@ -39,7 +39,7 @@ public class SpeedUp implements State {
         if (velocityMessage != null) {
             if (velocityMessage.getVelocity() < Configuration.MIN_VELOCITY_FOR_ROUNDDETECTION) {
                 power += 5;
-                LOGGER.info("Speed to low, set power to " + power);
+                LOGGER.info("Speed to low, set power to " + power + ", Velocity: " + velocityMessage.getVelocity());
                 ServiceManager.getInstance().getPowerService().setPower(power);
 
             } else {
