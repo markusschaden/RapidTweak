@@ -23,7 +23,7 @@ public class ServiceManager {
 
     public static ServiceManager getInstance() {
         if (instance == null) {
-            synchronized (PowerService.class) {
+            synchronized (ServiceManager.class) {
                 if (instance == null) {
                     instance = new ServiceManager();
                 }
