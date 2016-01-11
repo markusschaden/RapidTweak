@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
@@ -21,7 +22,7 @@ public class Rounddetection implements State {
 
     private final Logger LOGGER = LoggerFactory.getLogger(Rounddetection.class);
 
-    private int TIMEOUT_WATCHDOG_MODELER = 1000 * 100;
+
     private Watchdog watchdog;
     private RoundDetection roundDetection = new RoundDetection();
     private boolean first = true;
@@ -147,7 +148,7 @@ public class Rounddetection implements State {
         @Override
         public void run() {
             try {
-                Thread.sleep(TIMEOUT_WATCHDOG_MODELER);
+                Thread.sleep(Configuration.TIMEOUT_WATCHDOG_ROUNDDETECTION);
                 if (active) {
                     LOGGER.warn("Track couldn't be identified, delete track");
                     callback.setState(StateType.RESET);

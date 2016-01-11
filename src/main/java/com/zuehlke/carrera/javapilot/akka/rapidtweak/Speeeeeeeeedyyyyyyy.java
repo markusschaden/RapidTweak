@@ -13,7 +13,7 @@ import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.zuehlke.carrera.javapilot.akka.Configuration.START_VELOCITY;
+import static com.zuehlke.carrera.javapilot.akka.Configuration.START_POWER;
 
 /**
  * A very simple actor that determines the power value by a configurable Threshold on any of the 10 observables
@@ -29,7 +29,7 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
 
     public Speeeeeeeeedyyyyyyy(ActorRef pilot) {
         this.pilot = pilot;
-        this.power = START_VELOCITY;
+        this.power = START_POWER;
         routingService = new RoutingService(pilot, this);
     }
 
@@ -65,7 +65,7 @@ public class Speeeeeeeeedyyyyyyy extends UntypedActor {
             LeftCurveTrackElement.resetCounter();
             SpeedMeasureTrackElement.resetCounter();
 
-            pilot.tell(new PowerAction(START_VELOCITY), getSelf());
+            pilot.tell(new PowerAction(START_POWER), getSelf());
             routingService.onRaceStart((RaceStartMessage) message);
         } else {
 

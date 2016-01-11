@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.Configuration;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.power.PowerExecutor;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
 import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
 import com.zuehlke.carrera.relayapi.messages.SensorEvent;
@@ -14,10 +15,8 @@ import org.slf4j.LoggerFactory;
 public class LuckyPunch implements State {
 
     private final Logger LOGGER = LoggerFactory.getLogger(LuckyPunch.class);
-
-    LuckyPunchThread luckyPunchThread;
-
-    StateCallback callback;
+    private LuckyPunchThread luckyPunchThread;
+    private StateCallback callback;
 
     public LuckyPunch(StateCallback callback) {
         this.callback = callback;
@@ -67,12 +66,14 @@ public class LuckyPunch implements State {
 
             while (running) {
                 LOGGER.info("SpeedUp: " + speed);
-                ServiceManager.getInstance().getPowerService().setPower(speed);
+                PowerExecutor powerExecutor = new PowerExecutor();
+                powerExecutor.setPowerFor(Configuration.MAX_POWER_STRAIGHT, Configuration.LUCKY_PUNCH_INTERVAL_ACCELERATION_TIME, Configuration.START_POWER);
+                //ServiceManager.getInstance().getPowerService().setPower(speed);
                 if(speed < 250) {
                     speed += 2;
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

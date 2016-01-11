@@ -139,11 +139,11 @@ public class Experiment implements State {
 
     private void fireOptimizerEvents(TrackElement trackElement, int elementPosition) {
 
-        for (Optimizer optimizer : optimizers) {
-            optimizer.onTrackElementChange(trackElement, elementPosition);
+        if (!penaltyOccured) {
+            for (Optimizer optimizer : optimizers) {
+                optimizer.onTrackElementChange(trackElement, elementPosition);
+            }
         }
-
-
     }
 
 

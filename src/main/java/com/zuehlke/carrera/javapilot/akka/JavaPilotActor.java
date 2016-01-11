@@ -78,7 +78,7 @@ public class JavaPilotActor extends UntypedActor {
                 SpeedMeasureTrackElement.resetCounter();
 
                 handleRaceStart((RaceStartMessage) message);
-                ServiceManager.getInstance().getPowerService().setPower((Configuration.START_VELOCITY));*/
+                ServiceManager.getInstance().getPowerService().setPower((Configuration.START_POWER));*/
 
                 createTopology();
                 long now = System.currentTimeMillis();

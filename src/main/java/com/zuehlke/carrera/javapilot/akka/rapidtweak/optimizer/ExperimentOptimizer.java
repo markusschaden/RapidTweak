@@ -21,8 +21,8 @@ public class ExperimentOptimizer implements Optimizer {
     private Race race;
     private final Logger LOGGER = LoggerFactory.getLogger(ExperimentOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = Configuration.MAX_STRAIGHT;
-    private final int MIN_POWER = Configuration.START_VELOCITY;
+    private final int MAX_POWER = Configuration.MAX_POWER_STRAIGHT;
+    private final int MIN_POWER = Configuration.START_POWER;
 
     public ExperimentOptimizer(Race race) {
         this.race = race;
@@ -56,10 +56,10 @@ public class ExperimentOptimizer implements Optimizer {
                 if (experimentEntry.isPenaltyOccured()) {
                     accelerationTime = (int) (experimentEntry.getAcceleartionTime() - 100);
                 } else {
-                    int adder = 40;
+                    int adder = Configuration.INCREASE_ACCELERATION_TIME_STRAIGHT;
                     long newAccelerationTime;
                     do {
-                        adder -= 10;
+                        adder -= Configuration.DECREASE_ACCELERATION_TIME_STRAIGHT;
                         newAccelerationTime = experimentEntry.getAcceleartionTime() + adder;
 
 
@@ -85,7 +85,7 @@ public class ExperimentOptimizer implements Optimizer {
     private boolean checkSpeed(List<ExperimentEntry> list, long newAccelerationTime) {
         for (ExperimentEntry ee : list) {
             if (ee.getAcceleartionTime() <= newAccelerationTime && ee.isPenaltyOccured()) {
-                //return false;
+                return false;
             }
         }
         return true;

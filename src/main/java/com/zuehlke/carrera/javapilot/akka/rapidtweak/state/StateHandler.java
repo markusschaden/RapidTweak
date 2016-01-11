@@ -1,5 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
+import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
@@ -15,8 +16,6 @@ import java.util.HashMap;
 public class StateHandler implements StateCallback {
 
     private final Logger LOGGER = LoggerFactory.getLogger(StateHandler.class);
-
-    int LUCKY_PUNCH_WAITTIME = 1000 * 60 * 4;
 
     State currentState;
     StateType currentStateType;
@@ -98,8 +97,8 @@ public class StateHandler implements StateCallback {
             @Override
             public void run() {
                 try {
-                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + LUCKY_PUNCH_WAITTIME + "ms");
-                    Thread.sleep(LUCKY_PUNCH_WAITTIME);
+                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + Configuration.LUCKY_PUNCH_WAITTIME + "ms");
+                    Thread.sleep(Configuration.LUCKY_PUNCH_WAITTIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

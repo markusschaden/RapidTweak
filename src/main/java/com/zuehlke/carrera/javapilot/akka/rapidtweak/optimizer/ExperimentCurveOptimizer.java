@@ -19,8 +19,8 @@ public class ExperimentCurveOptimizer implements Optimizer {
     private boolean active = false;
     private final Logger LOGGER = LoggerFactory.getLogger(ExperimentCurveOptimizer.class);
     private TrackElement lastTrackElement;
-    private final int MAX_POWER = Configuration.MAX_CURVE;
-    private final int MIN_POWER = Configuration.START_VELOCITY;
+    private final int MAX_POWER = Configuration.MAX_POWER_CURVE;
+    private final int MIN_POWER = Configuration.START_POWER;
 
 
     public ExperimentCurveOptimizer(Race race) {
@@ -51,10 +51,10 @@ public class ExperimentCurveOptimizer implements Optimizer {
                 if (experimentEntry.isPenaltyOccured()) {
                     accelerationTime = (int) (experimentEntry.getAcceleartionTime() - 100);
                 } else {
-                    int adder = 40;
+                    int adder = Configuration.INCREASE_ACCELERATION_TIME_CURVE;
                     long newAccelerationTime;
                     do {
-                        adder -= 10;
+                        adder -= Configuration.DECREASE_ACCELERATION_TIME_CURVE;
                         newAccelerationTime = experimentEntry.getAcceleartionTime() + adder;
 
 
@@ -87,14 +87,4 @@ public class ExperimentCurveOptimizer implements Optimizer {
         }
         return true;
     }
-
-
-    private int calculatePowerIncrease(TrackElement trackElement) {
-
-        //TODO: correct power
-        double duration = trackElement.getAverageDuration();
-
-        return 10;
-    }
-
 }

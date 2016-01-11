@@ -15,13 +15,13 @@ public class SpeedUp implements State {
 
     StateCallback callback;
     Context context;
-    private int power = Configuration.START_VELOCITY;
+    private int power = Configuration.START_POWER;
 
     public SpeedUp(Context context, StateCallback callback) {
         this.callback = callback;
         this.context = context;
 
-        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_VELOCITY);
+        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_POWER);
     }
 
     @Override
@@ -30,13 +30,13 @@ public class SpeedUp implements State {
     }
 
     public void onRaceStartMessage(RaceStartMessage message) {
-        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_VELOCITY);
+        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_POWER);
     }
 
     @Override
     public void onVelocityMessage(VelocityMessage velocityMessage) {
         if (velocityMessage != null) {
-            if (velocityMessage.getVelocity() < 200) {
+            if (velocityMessage.getVelocity() < Configuration.MIN_VELOCITY_FOR_ROUNDDETECTION) {
                 power += 5;
                 LOGGER.info("Speed to low, set power to " + power);
                 ServiceManager.getInstance().getPowerService().setPower(power);

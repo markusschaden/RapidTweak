@@ -62,7 +62,7 @@ public class RoundDetection {
 
         LOGGER.error("Round matched, diff " + Math.abs(time1 - time2) + "ms");
 
-        if (Math.abs(time1 - time2) < Configuration.DELTA) {
+        if (Math.abs(time1 - time2) < Configuration.DELTA_TIME_ROUNDDETECTION) {
             LOGGER.error("Round matched within delta");
             return true;
         }
