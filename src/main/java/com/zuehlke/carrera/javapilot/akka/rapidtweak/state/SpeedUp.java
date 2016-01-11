@@ -2,10 +2,7 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
-import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
-import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
-import com.zuehlke.carrera.relayapi.messages.SensorEvent;
-import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
+import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +27,10 @@ public class SpeedUp implements State {
     @Override
     public void onSensorEvent(SensorEvent sensorEvent) {
 
+    }
+
+    public void onRaceStartMessage(RaceStartMessage message) {
+        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_VELOCITY);
     }
 
     @Override

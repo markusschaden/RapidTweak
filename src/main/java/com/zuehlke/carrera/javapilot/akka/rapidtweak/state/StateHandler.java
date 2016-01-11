@@ -16,7 +16,7 @@ public class StateHandler implements StateCallback {
 
     private final Logger LOGGER = LoggerFactory.getLogger(StateHandler.class);
 
-    int waittime = 1000 * 60 * 4;
+    int LUCKY_PUNCH_WAITTIME = 1000 * 60 * 4;
 
     State currentState;
     StateType currentStateType;
@@ -76,6 +76,9 @@ public class StateHandler implements StateCallback {
             ((LuckyPunch) currentState).stop();
         }
         setupLuckyPunch();
+
+        setState(StateType.SPEEDUP);
+        ((SpeedUp) currentState).onRaceStartMessage(message);
     }
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
@@ -95,8 +98,8 @@ public class StateHandler implements StateCallback {
             @Override
             public void run() {
                 try {
-                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + waittime + "ms");
-                    Thread.sleep(waittime);
+                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + LUCKY_PUNCH_WAITTIME + "ms");
+                    Thread.sleep(LUCKY_PUNCH_WAITTIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
