@@ -30,6 +30,7 @@ public class SpeedUp implements State {
     }
 
     public void onRaceStartMessage(RaceStartMessage message) {
+        LOGGER.info("Set Power to: " + Configuration.START_POWER);
         ServiceManager.getInstance().getPowerService().setPower(Configuration.START_POWER);
     }
 

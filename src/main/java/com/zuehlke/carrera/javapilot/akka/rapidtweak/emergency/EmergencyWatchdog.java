@@ -1,6 +1,7 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency;
 
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.StateHandler;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.StateType;
 import com.zuehlke.carrera.relayapi.messages.SensorEvent;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -14,9 +15,14 @@ public class EmergencyWatchdog {
     private final Logger LOGGER = LoggerFactory.getLogger(EmergencyWatchdog.class);
 
     private final int TIMEOUT = 200;
+    private final StateHandler stateHandler;
     private long lastUpdate = 0;
     private int[] sensorValues = new int[5];
     private Watchdog watchdog;
+
+    public EmergencyWatchdog(StateHandler stateHandler) {
+        this.stateHandler = stateHandler;
+    }
 
     public void onSensorEvent(SensorEvent sensorEvent) {
 
@@ -28,11 +34,13 @@ public class EmergencyWatchdog {
     }
 
     public void cancel() {
-        watchdog.canceled = true;
+        if (watchdog != null) {
+            watchdog.canceled = true;
+        }
     }
 
 
-    private void fallout() {
+    public void fallout() {
 
         LOGGER.error("Fallout");
 
@@ -64,7 +72,9 @@ public class EmergencyWatchdog {
 
 
         LOGGER.error("Reseting race");
-        ServiceManager.getInstance().getPowerService().setPower(100);
+
+        stateHandler.setState(StateType.RESET);
+        stateHandler.setupWatchdog();
     }
 
 

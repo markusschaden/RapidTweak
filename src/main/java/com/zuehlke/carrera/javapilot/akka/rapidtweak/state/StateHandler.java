@@ -2,6 +2,7 @@ package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
 import com.zuehlke.carrera.javapilot.akka.Configuration;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.relayapi.messages.*;
@@ -21,6 +22,8 @@ public class StateHandler implements StateCallback {
     StateType currentStateType;
     Context context;
     HashMap<StateType, State> states = new HashMap<>();
+    SetupLuckyPunchThread luckyPunchThread;
+    EmergencyWatchdog emergencyWatchdog;
 
     public StateHandler(Context context) {
         this.context = context;
@@ -61,23 +64,50 @@ public class StateHandler implements StateCallback {
     }
 
     public void onSensorEvent(SensorEvent event) {
+        if (emergencyWatchdog != null) {
+            emergencyWatchdog.onSensorEvent(event);
+        }
+
         if (currentState != null) currentState.onSensorEvent(event);
     }
 
     public void onRaceStopMessage(RaceStopMessage message) {
+        if (emergencyWatchdog != null) {
+            synchronized (emergencyWatchdog) {
+                emergencyWatchdog.cancel();
+                emergencyWatchdog = null;
+            }
+        }
+
         if (currentState instanceof LuckyPunch) {
             ((LuckyPunch) currentState).stop();
+        }
+
+        if (luckyPunchThread != null) {
+            luckyPunchThread.cancel();
         }
     }
 
     public void onRaceStartMessage(RaceStartMessage message) {
+        setupWatchdog();
+
+        LOGGER.info("RaceStart received");
         if (currentState instanceof LuckyPunch) {
             ((LuckyPunch) currentState).stop();
         }
         setupLuckyPunch();
 
-        setState(StateType.SPEEDUP);
+        if (!(currentState instanceof SpeedUp)) {
+            setState(StateType.SPEEDUP);
+        }
         ((SpeedUp) currentState).onRaceStartMessage(message);
+
+        new Test().start();
+    }
+
+    public void setupWatchdog() {
+        emergencyWatchdog = new EmergencyWatchdog(this);
+        LOGGER.info("EmergencyWatchdog started");
     }
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
@@ -93,18 +123,47 @@ public class StateHandler implements StateCallback {
     }
 
     public void setupLuckyPunch() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + Configuration.LUCKY_PUNCH_WAITTIME + "ms");
-                    Thread.sleep(Configuration.LUCKY_PUNCH_WAITTIME);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        if (luckyPunchThread != null) {
+            luckyPunchThread.cancel();
+        }
+        luckyPunchThread = new SetupLuckyPunchThread();
+        luckyPunchThread.start();
+    }
+
+    class SetupLuckyPunchThread extends Thread {
+
+        private boolean active = true;
+
+        public void cancel() {
+            active = false;
+        }
+
+        @Override
+        public void run() {
+            try {
+                LOGGER.info("Setup LuckyPunch Algo, wait until start: " + Configuration.LUCKY_PUNCH_WAITTIME + "ms");
+                Thread.sleep(Configuration.LUCKY_PUNCH_WAITTIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (active) {
                 LOGGER.info("Start LuckyPunch");
                 startLuckyPunch();
             }
-        }.start();
+        }
+    }
+
+    private class Test extends Thread {
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(30000);
+                emergencyWatchdog.fallout();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

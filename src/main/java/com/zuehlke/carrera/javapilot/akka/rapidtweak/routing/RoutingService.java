@@ -9,7 +9,6 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpee
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.Context;
@@ -29,10 +28,8 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     StateHandler stateHandler;
     //RaceDatabase raceDatabase;
     TrackCoordinateCalculator trackModelerCoordinateCalculator;
-    EmergencyWatchdog emergencyWatchdog;
 
     public RoutingService(ActorRef pilot, UntypedActor actor) {
-        emergencyWatchdog = new EmergencyWatchdog();
 
         ServiceManager.getInstance().getPowerService().init(pilot, actor);
         init();
@@ -46,6 +43,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
 
         trackModelerCoordinateCalculator = new TrackCoordinateCalculator();
         stateHandler = new StateHandler(context);
+
         //trackModeler.setPower(100);
         //trackOptimizer = new TrackOptimizer(race);
         //raceDatabase = new RaceDatabase();
@@ -71,9 +69,6 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     }
 
     public void onSensorEvent(SensorEvent event) {
-        if (emergencyWatchdog != null) {
-            emergencyWatchdog.onSensorEvent(event);
-        }
 
         stateHandler.onSensorEvent(event);
     }
@@ -105,10 +100,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     }
 
     public void onRaceStop(RaceStopMessage message) {
-        synchronized (emergencyWatchdog) {
-            emergencyWatchdog.cancel();
-            emergencyWatchdog = null;
-        }
+
         stateHandler.onRaceStopMessage(message);
         //raceDatabase.insertRace(race);
     }
@@ -125,5 +117,4 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
             ServiceManager.getInstance().getMessageDispatcher().sendSingleMessage(webSocket, raceDrawerMessage);
         }
     }
-
 }

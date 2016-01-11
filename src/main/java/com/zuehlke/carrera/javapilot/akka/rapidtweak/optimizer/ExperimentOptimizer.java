@@ -46,7 +46,7 @@ public class ExperimentOptimizer implements Optimizer {
             int id = trackElement.getId();
             long duration = trackElement.getDurations().get(0).getTime();
 
-            int accelerationTime = (int) (duration / 4);
+            int accelerationTime = (int) (duration / Configuration.EXPERIMENT_ACCELERATION_LENGTH_DIVIDER_STRAIGHT);
 
             List<ExperimentEntry> list = race.getStraightExperiment().get(id);
             if (list == null) {

@@ -41,7 +41,7 @@ public class ExperimentCurveOptimizer implements Optimizer {
             int id = trackElement.getId();
             long duration = trackElement.getDurations().get(0).getTime();
 
-            int accelerationTime = (int) (duration / 4);
+            int accelerationTime = (int) (duration / Configuration.EXPERIMENT_ACCELERATION_LENGTH_DIVIDER_CURVE);
 
             List<ExperimentEntry> list = race.getStraightExperiment().get(id);
             if (list == null) {
@@ -69,7 +69,7 @@ public class ExperimentCurveOptimizer implements Optimizer {
             race.getStraightExperiment().put(id, list);
 
             PowerExecutor powerExecutor = new PowerExecutor();
-            powerExecutor.setPowerAfterTimeFor(MAX_POWER, accelerationTime, MIN_POWER, (long) (trackElement.getAverageDuration() / 3));
+            powerExecutor.setPowerAfterTimeFor(MAX_POWER, accelerationTime, MIN_POWER, (long) (trackElement.getAverageDuration() / Configuration.START_ACCELERATION_DIVIDER_CURVE));
         }
         //PowerService.getInstance().setPower(140);
     }

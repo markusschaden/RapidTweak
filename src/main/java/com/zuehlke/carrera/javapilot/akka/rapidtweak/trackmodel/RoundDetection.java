@@ -26,7 +26,7 @@ public class RoundDetection {
         int size = race.getFilteredTrack().size();
         long duration = new Date().getTime() - race.getFilteredTrack().get(0).getStartTimestamp(); //TODO: erstes filtered element verwenden
         if (size % 2 == 1 || size < 4) return false;
-        if (duration < 4000) { //min duration = 4sec
+        if (duration < Configuration.MIN_ROUND_DURATION) { //min duration = 4sec
             LOGGER.warn("Track to short for matching");
             return false;
         }
