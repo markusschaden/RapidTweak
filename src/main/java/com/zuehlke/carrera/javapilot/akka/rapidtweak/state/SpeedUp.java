@@ -23,6 +23,8 @@ public class SpeedUp implements State {
     public SpeedUp(Context context, StateCallback callback) {
         this.callback = callback;
         this.context = context;
+
+        ServiceManager.getInstance().getPowerService().setPower(Configuration.START_VELOCITY);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class SpeedUp implements State {
     public void onVelocityMessage(VelocityMessage velocityMessage) {
         if (velocityMessage != null) {
             if (velocityMessage.getVelocity() < 200) {
-                power += 10;
+                power += 5;
                 LOGGER.info("Speed to low, set power to " + power);
                 ServiceManager.getInstance().getPowerService().setPower(power);
 

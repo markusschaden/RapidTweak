@@ -48,17 +48,29 @@ public class LuckyPunch implements State {
         luckyPunchThread.start();
     }
 
+    public void stop() {
+        luckyPunchThread.halt();
+    }
+
     class LuckyPunchThread extends Thread {
 
         int speed = 140;
+        boolean running = true;
+
+        public void halt() {
+            LOGGER.info("Stopping SpeedUp Thread");
+            running = false;
+        }
 
         @Override
         public void run() {
 
-            while (true) {
+            while (running) {
                 LOGGER.info("SpeedUp: " + speed);
                 ServiceManager.getInstance().getPowerService().setPower(speed);
-                speed += 2;
+                if(speed < 250) {
+                    speed += 2;
+                }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

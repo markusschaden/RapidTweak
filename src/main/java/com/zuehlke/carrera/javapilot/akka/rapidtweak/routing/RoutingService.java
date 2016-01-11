@@ -110,6 +110,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
             emergencyWatchdog.cancel();
             emergencyWatchdog = null;
         }
+        stateHandler.onRaceStopMessage(message);
         raceDatabase.insertRace(race);
     }
 

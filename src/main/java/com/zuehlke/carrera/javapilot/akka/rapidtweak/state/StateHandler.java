@@ -1,12 +1,10 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
+import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
-import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
-import com.zuehlke.carrera.relayapi.messages.RoundTimeMessage;
-import com.zuehlke.carrera.relayapi.messages.SensorEvent;
-import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
+import com.zuehlke.carrera.relayapi.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +66,12 @@ public class StateHandler implements StateCallback {
 
     public void onSensorEvent(SensorEvent event) {
         if (currentState != null) currentState.onSensorEvent(event);
+    }
+
+    public void onRaceStopMessage(RaceStopMessage message) {
+        if (currentState instanceof LuckyPunch) {
+            ((LuckyPunch) currentState).stop();
+        }
     }
 
     public void onRoundTimeMessage(RoundTimeMessage message) {
