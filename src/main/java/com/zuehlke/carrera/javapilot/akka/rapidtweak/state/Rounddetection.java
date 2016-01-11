@@ -54,6 +54,7 @@ public class Rounddetection implements State {
         if (currentTrackElement == null) {
 
             currentTrackElement = (heuristicElements.getHeuristicElement(sensorEvent.getG()[2]));
+            if (currentTrackElement == null) return;
             currentTrackElement.setStartTimestamp(sensorEvent.getTimeStamp());
             return;
         }

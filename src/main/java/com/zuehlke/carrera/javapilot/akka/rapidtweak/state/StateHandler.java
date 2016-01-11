@@ -101,8 +101,11 @@ public class StateHandler implements StateCallback {
             setState(StateType.SPEEDUP);
         }
         ((SpeedUp) currentState).onRaceStartMessage(message);
+    }
 
-        new Test().start();
+    public void resetAll() {
+        setState(StateType.RESET);
+        setupWatchdog();
     }
 
     public void setupWatchdog() {
@@ -150,20 +153,6 @@ public class StateHandler implements StateCallback {
                 LOGGER.info("Start LuckyPunch");
                 startLuckyPunch();
             }
-        }
-    }
-
-    private class Test extends Thread {
-
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(30000);
-                emergencyWatchdog.fallout();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
         }
     }
 }

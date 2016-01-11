@@ -1,7 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.StateHandler;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.state.StateType;
 import com.zuehlke.carrera.relayapi.messages.SensorEvent;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -73,8 +72,8 @@ public class EmergencyWatchdog {
 
         LOGGER.error("Reseting race");
 
-        stateHandler.setState(StateType.RESET);
-        stateHandler.setupWatchdog();
+        watchdog.canceled = true;
+        stateHandler.resetAll();
     }
 
 
