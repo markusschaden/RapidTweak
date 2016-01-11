@@ -9,7 +9,6 @@ import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.ManualSpee
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.MonitoringMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.RaceDrawerMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.coordinates.TrackCoordinateCalculator;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.dal.RaceDatabase;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.emergency.EmergencyWatchdog;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.race.RaceStatus;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
@@ -28,7 +27,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
     RaceStatus raceStatus = RaceStatus.UNDEFINED;
     Race race;
     StateHandler stateHandler;
-    RaceDatabase raceDatabase;
+    //RaceDatabase raceDatabase;
     TrackCoordinateCalculator trackModelerCoordinateCalculator;
     EmergencyWatchdog emergencyWatchdog;
 
@@ -49,7 +48,7 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
         stateHandler = new StateHandler(context);
         //trackModeler.setPower(100);
         //trackOptimizer = new TrackOptimizer(race);
-        raceDatabase = new RaceDatabase();
+        //raceDatabase = new RaceDatabase();
 
         ServiceManager.getInstance().getPowerService().reset();
         //ServiceManager.getInstance().getPowerService().addPowerNotifier(trackModeler);
@@ -111,11 +110,12 @@ public class RoutingService implements MessageEndpoint, ClientHandler {
             emergencyWatchdog = null;
         }
         stateHandler.onRaceStopMessage(message);
-        raceDatabase.insertRace(race);
+        //raceDatabase.insertRace(race);
     }
 
     public void onRaceStart(RaceStartMessage message) {
         race.setTrackId(message.getTrackId());
+        stateHandler.onRaceStartMessage(message);
     }
 
     @Override

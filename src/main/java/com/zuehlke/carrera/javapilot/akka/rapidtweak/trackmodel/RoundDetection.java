@@ -24,8 +24,12 @@ public class RoundDetection {
     public boolean isRound(Race race) {
         if (race == null || race.getFilteredTrack() == null) return false;
         int size = race.getFilteredTrack().size();
-        long duration = new Date().getTime() - race.getTime();
-        if (size % 2 == 1 || size < 4 || duration < 4000) return false; //min duration = 4sec
+        long duration = new Date().getTime() - race.getFilteredTrack().get(0).getStartTimestamp(); //TODO: erstes filtered element verwenden
+        if (size % 2 == 1 || size < 4) return false;
+        if (duration < 4000) { //min duration = 4sec
+            LOGGER.warn("Track to short for matching");
+            return false;
+        }
 
         List<TrackElement> round1 = race.getFilteredTrack().subList(0, size / 2);
         List<TrackElement> round2 = race.getFilteredTrack().subList(size / 2, size);

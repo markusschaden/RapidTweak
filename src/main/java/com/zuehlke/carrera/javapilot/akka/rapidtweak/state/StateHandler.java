@@ -1,7 +1,6 @@
 package com.zuehlke.carrera.javapilot.akka.rapidtweak.state;
 
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StateMessage;
-import com.zuehlke.carrera.javapilot.akka.rapidtweak.android.messages.StopMessage;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.service.ServiceManager;
 import com.zuehlke.carrera.javapilot.akka.rapidtweak.track.Race;
 import com.zuehlke.carrera.relayapi.messages.*;
@@ -33,8 +32,6 @@ public class StateHandler implements StateCallback {
         states.put(StateType.ROUNDDETECTION, new Rounddetection(context, this));
 
         setState(StateType.SPEEDUP);
-
-        setupLuckyPunch();
     }
 
     @Override
@@ -74,6 +71,13 @@ public class StateHandler implements StateCallback {
         }
     }
 
+    public void onRaceStartMessage(RaceStartMessage message) {
+        if (currentState instanceof LuckyPunch) {
+            ((LuckyPunch) currentState).stop();
+        }
+        setupLuckyPunch();
+    }
+
     public void onRoundTimeMessage(RoundTimeMessage message) {
         if (currentState != null) currentState.onRoundTimeMessage(message);
     }
@@ -91,7 +95,7 @@ public class StateHandler implements StateCallback {
             @Override
             public void run() {
                 try {
-                    LOGGER.info("Setup SpeedUp Algo, wait until start: " + waittime + "ms");
+                    LOGGER.info("Setup LuckyPunch Algo, wait until start: " + waittime + "ms");
                     Thread.sleep(waittime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
